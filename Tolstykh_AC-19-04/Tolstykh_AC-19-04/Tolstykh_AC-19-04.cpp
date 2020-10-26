@@ -1,7 +1,7 @@
 ﻿#include <iostream> 
 #include <fstream>
 using namespace std;
-struct pipe
+struct pipe 
 {
 	int identificator;
 	float dlina;
@@ -9,7 +9,7 @@ struct pipe
 	bool priznak;
 
 };
-struct KC
+struct KC 
 {
 	int identificator ;
 	string name;
@@ -42,10 +42,36 @@ KC createKC()
 	cin >> k.kolvo_tsehov_v_rabote;
 	cout << "Введите пожалуйста значение эффективности КС" << endl ;
 	cin >> k.effektivnost;
-	return k;
-	
-
+	return k;	
 };
+pipe Loadpipe()
+{
+	ifstream fin;
+	fin.open("datapipe.txt", ios::in);
+	pipe p;
+	fin >> p.dlina;
+	fin >> p.diametr;
+	fin >> p.priznak;
+	fin.close();
+	return p;
+}
+KC LoadKC()
+{
+	KC k;
+	ifstream fin;
+	fin.open("dataKC.txt", ios::in);
+	fin >> k.name;
+	fin >> k.kolvo_tsehov;
+	fin >> k.kolvo_tsehov_v_rabote;
+	fin >> k.effektivnost;
+	fin.close();
+	return k;
+
+}
+void Viewpipe(const pipe&p)
+{
+
+}
 //pipe InputPipe()
 //{
 //	pipe p;
@@ -72,14 +98,14 @@ KC createKC()
 //	fout.open("data.txt", ios::out);
 //	fout << p.name
 //}
-//int main()
-//{
-//	pipe p= InputPipe();
-//	printpipe(p);
-//	Editpipe(p);
-//	printpipe(p);
-//
-//	return 0;
-//}
-//
+int main()
+{
+	/*pipe p;
+	KC k;*/
+	setlocale(LC_ALL, "Russian");
+
+
+	return 0;
+}
+
 
