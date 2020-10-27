@@ -9,21 +9,33 @@ struct pipe
 	bool priznak;
 
 };
-struct KC 
-{
-	int identificator ;
+struct KC
+{   int identificator;
 	string name;
- int kolvo_tsehov;
- int kolvo_tsehov_v_rabote;
- float effektivnost;
+	int kolvo_tsehov;
+	int kolvo_tsehov_v_rabote;
+	float effektivnost;
 };
+int proverka(int min, int max)
+{
+int p = 0;
+do
+{
+	cin.clear();
+	cin.ignore(10000, '\n');
+	cout << "Введите пожалуйста коррректные данные: " << endl;
+} while (!(cin >> p) || p > max || p < min);
+
+	return p;
+}
+
 bool isNumber(char Symbol)
 {
 	if (Symbol >= '0' && Symbol <= '9')
 		return true;
 	return false;
 
-}
+};
 pipe createpipe ()
 {
 	pipe p;
@@ -32,7 +44,7 @@ pipe createpipe ()
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
-		cout << "Определите пожалуйста признак в ремонте: " << endl;
+		cout << "Определите пожалуйста признак в ремонте(1-в ремонте или 0-не в ремонте): " << endl;
 		cin >> p.priznak;
 	} 
 	while (cin.fail()|| isNumber(p.priznak));
@@ -41,7 +53,7 @@ pipe createpipe ()
 	{
 		cin.clear();
 		cin.ignore(10000, '\n');
-		cout << "Введите пожалуйста длину трубы(>=0) : " << endl;
+		cout << "Введите пожалуйста длину трубы(>0) : " << endl;
 	    cin>> p.dlina;
 	}
 	while (cin.fail() || p.dlina <= 0||isNumber(p.dlina)); 
@@ -50,17 +62,18 @@ pipe createpipe ()
 	{
 		cin.clear();
 		cin.ignore(10000,'\n');
-		cout << "Введите пожалуйста диаметр трубы(>=0)" << endl;
+		cout << "Введите пожалуйста диаметр трубы(>0)" << endl;
 		cin >> p.diametr;
 	} 
-	while (cin.fail() || p.diametr >= 0|| isNumber(p.diametr));
+	while (cin.fail() || p.diametr <=
+		0|| isNumber(p.diametr));
 	return p;
 };
 KC createKC()
 {
 	KC k;
 	k.identificator = 100;
-	k.effektivnost = (k.kolvo_tsehov - k.kolvo_tsehov_v_rabote) / (k.kolvo_tsehov);
+	k.effektivnost =(k.kolvo_tsehov - k.kolvo_tsehov_v_rabote) / (k.kolvo_tsehov);
 	do
 	{
 		cin.clear();
@@ -76,13 +89,13 @@ KC createKC()
 		cout << "Введите пожалуйста количество цехов(>=1)" << endl;
 		cin >> k.kolvo_tsehov;
 	}
-	while (cin.fail()|| k.kolvo_tsehov>=1||isNumber(k.kolvo_tsehov);
+	while (cin.fail()|| k.kolvo_tsehov<1||isNumber(k.kolvo_tsehov));
 	do
 	{
 		cout << "Введите пожалуйста количество цехов в работе" << endl;
 		cin >> k.kolvo_tsehov_v_rabote;
 	}
-	while (cin.fail() || k.kolvo_tsehov_v_rabote <= k.kolvo_tsehov||isNumber(k.kolvo_tsehov_v_rabote));
+	while (cin.fail() || k.kolvo_tsehov_v_rabote > k.kolvo_tsehov||isNumber(k.kolvo_tsehov_v_rabote));
 	
 	return k;	
 };
@@ -148,35 +161,29 @@ void Savepipe(const pipe& p)
 {
 	ofstream fout;
 	fout.open("datapipe.txt", ios::out);
-	if (fout.is_open)
-	{
+	
 		fout << "Identificator:" << p.identificator << endl;
 		fout << "Dlina:" << p.dlina << endl;
 		fout << "Diametr" << p.diametr << endl;
 		fout << "Priznak" << p.priznak << endl;
 		fout.close();
-	}
+	
 }
 void SaveKC(const KC& k)
 {
 	ofstream fout;
 	fout.open("datapipe.txt", ios::out);
-	if (fout.is_open)
-	{
 		fout << "Identificator:" << k.identificator << endl;
-		fout << "Dlina:" << p.dlina << endl;
-		fout << "Diametr" << p.diametr << endl;
-		fout << "Priznak" << p.priznak << endl;
+		fout << "Name:" << k.name << endl;
+		fout << "Kolvo tsehov:" << k.kolvo_tsehov << endl;
+		fout << "Kolvo tsehov v rabote:" << k.kolvo_tsehov_v_rabote << endl;
+		fout << "Effektivnost:" << k.effektivnost << endl;
 		fout.close();
-	}
 }
 void save(const pipe& p, const KC& k)
 {
 	ofstream fout;
 	fout.open("dataall.txt", ios::out);
-	if (fout.is_open)
-
-	{
 		fout << "Identificator:" << p.identificator << endl;
 		fout << "Dlina:" << p.dlina << endl;
 		fout << "Diametr" << p.diametr << endl;
@@ -186,7 +193,7 @@ void save(const pipe& p, const KC& k)
 		fout << "Diametr" << p.diametr << endl;
 		fout << "Priznak" << p.priznak << endl;
 		fout.close();
-	}
+	
 
 	}
 void saveall(int s, const pipe& pi, const KC&st)
@@ -209,13 +216,11 @@ pipe Loadpipe()
 	pipe p;
 	ifstream fin;
 	fin.open("datapipe.txt", ios::in);
-	if (fin.is_open)
-	{
+
 		fin >> p.dlina;
 		fin >> p.diametr;
 		fin >> p.priznak;
 		fin.close();
-	}
 	return p;
 }
 KC LoadKC()
@@ -223,14 +228,12 @@ KC LoadKC()
 	KC k;
 	ifstream fin;
 	fin.open("dataKC.txt", ios::in);
-	if (fin.is_open)
-	{
+
 	fin >> k.name;
 	fin >> k.kolvo_tsehov;
 	fin >> k.kolvo_tsehov_v_rabote;
 	fin >> k.effektivnost;
 	fin.close();
-}
 	return k;
 
 }
@@ -245,21 +248,22 @@ void loadall(int l)
 		ViewKC(LoadKC());
 		break;
 	}
-
-
-	void PrintMenu();
-{
-	cout << "1.pipe" << endl
-		<< "2.KC" << endl
-		<< "3.View" << endl
-		<< "4.Editpipe" << endl
-		<< "5.EditKC" << endl
-		<<"6.Save"<< endl
-		<< "7.Load"<< endl
-		<< "0.Exit" << endl;
 }
 
-int main();
+
+	void PrintMenu()
+{
+	cout << "1.Труба" << endl
+		<< "2.Компрессорная станция" << endl
+		<< "3.Просмотреть" << endl
+		<< "4.Редактирование трубы" << endl
+		<< "5.Редактирование КС" << endl
+		<<"6.Сохранить"<< endl
+		<< "7.Загрузить"<< endl
+		<< "0.Выйти" << endl;
+}
+
+int main()
 {
 	setlocale(LC_ALL, "Russian");
 	pipe pi;
@@ -267,9 +271,8 @@ int main();
 	while (1)
 	{
 		PrintMenu();
-		int i = 0;
-		cin >> i;
-		switch (i)
+		
+		switch (proverka(0,7))
 		{
 		case 1:
 		{
