@@ -73,7 +73,7 @@ KC createKC()
 {
 	KC k;
 	k.identificator = 100;
-	k.effektivnost =(k.kolvo_tsehov - k.kolvo_tsehov_v_rabote) / (k.kolvo_tsehov);
+	k.effektivnost =(float(k.kolvo_tsehov) - float(k.kolvo_tsehov_v_rabote)) / float((k.kolvo_tsehov));
 	do
 	{
 		cin.clear();
@@ -161,29 +161,36 @@ void Savepipe(const pipe& p)
 {
 	ofstream fout;
 	fout.open("datapipe.txt", ios::out);
-	
+	if (fout.is_open())
+	{
+
 		fout << "Identificator:" << p.identificator << endl;
 		fout << "Dlina:" << p.dlina << endl;
 		fout << "Diametr" << p.diametr << endl;
 		fout << "Priznak" << p.priznak << endl;
 		fout.close();
-	
+	}
 }
 void SaveKC(const KC& k)
 {
 	ofstream fout;
 	fout.open("datapipe.txt", ios::out);
+	if (fout.is_open())
+	{
 		fout << "Identificator:" << k.identificator << endl;
 		fout << "Name:" << k.name << endl;
 		fout << "Kolvo tsehov:" << k.kolvo_tsehov << endl;
 		fout << "Kolvo tsehov v rabote:" << k.kolvo_tsehov_v_rabote << endl;
 		fout << "Effektivnost:" << k.effektivnost << endl;
 		fout.close();
+	}
 }
 void save(const pipe& p, const KC& k)
 {
 	ofstream fout;
 	fout.open("dataall.txt", ios::out);
+	if (fout.is_open())
+	{
 		fout << "Identificator:" << p.identificator << endl;
 		fout << "Dlina:" << p.dlina << endl;
 		fout << "Diametr" << p.diametr << endl;
@@ -193,7 +200,7 @@ void save(const pipe& p, const KC& k)
 		fout << "Diametr" << p.diametr << endl;
 		fout << "Priznak" << p.priznak << endl;
 		fout.close();
-	
+	}
 
 	}
 void saveall(int s, const pipe& pi, const KC&st)
@@ -216,26 +223,29 @@ pipe Loadpipe()
 	pipe p;
 	ifstream fin;
 	fin.open("datapipe.txt", ios::in);
-
+	if (fin.is_open())
+	{
 		fin >> p.dlina;
 		fin >> p.diametr;
 		fin >> p.priznak;
 		fin.close();
-	return p;
+		return p;
+	}
 }
 KC LoadKC()
 {
 	KC k;
 	ifstream fin;
 	fin.open("dataKC.txt", ios::in);
-
-	fin >> k.name;
-	fin >> k.kolvo_tsehov;
-	fin >> k.kolvo_tsehov_v_rabote;
-	fin >> k.effektivnost;
-	fin.close();
-	return k;
-
+	if (fin.is_open())
+	{
+		fin >> k.name;
+		fin >> k.kolvo_tsehov;
+		fin >> k.kolvo_tsehov_v_rabote;
+		fin >> k.effektivnost;
+		fin.close();
+		return k;
+	}
 }
 void loadall(int l)
 {
@@ -263,73 +273,73 @@ void loadall(int l)
 		<< "0.Выйти" << endl;
 }
 
-int main()
-{
-	setlocale(LC_ALL, "Russian");
-	pipe pi;
-	KC st;
-	while (1)
+	int main()
 	{
-		PrintMenu();
-		
-		switch (proverka(0,7))
+		setlocale(LC_ALL, "Russian");
+		pipe pi;
+		KC st;
+		while (1)
 		{
-		case 1:
-		{
-			pi = createpipe();
-			break;
-		}
-		case 2:
-		{
-			st = createKC();
-			break;
-		}
-		case 3:
-		{
-			cout << "Выберите пожалуйста нужный вариант. 1-pipe, 2- KC ";
-			int v = 0;
-			cin >> v;
-			viewall(v, pi, st);
-			break;
-		}
+			PrintMenu();
 
-		case 4:
-		{
-			Editpipe(pi);
-			break;
-		}
-		case 5:
-		{
-			EditKC(st);
-			break;
-		}
-		case 6:
-		{
-			cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all ";
-			int s = 0;
-			cin >> s;
-			saveall(s, pi, st);
-			break;
-		}
-		case 7:
-		{
-			cout << "Выберите пожалуйста нужный вариант. 1 - pipe, 2 - KC";
-			int l = 0;
-			cin >> l;
-			loadall(l);
-			break;
-		}
-		case 0:
-		{
-			return 0;
-		}
-		default:
-		{
-			cout << "Возникла ошибка" << endl;
-		}
+			switch (proverka(0, 7))
+			{
+			case 1:
+			{
+				pi = createpipe();
+				break;
+			}
+			case 2:
+			{
+				st = createKC();
+				break;
+			}
+			case 3:
+			{
+				cout << "Выберите пожалуйста нужный вариант. 1-pipe, 2- KC ";
+				int v = 0;
+				cin >> v;
+				viewall(v, pi, st);
+				break;
+			}
 
+			case 4:
+			{
+				Editpipe(pi);
+				break;
+			}
+			case 5:
+			{
+				EditKC(st);
+				break;
+			}
+			case 6:
+			{
+				cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all ";
+				int s = 0;
+				cin >> s;
+				saveall(s, pi, st);
+				break;
+			}
+			case 7:
+			{
+				cout << "Выберите пожалуйста нужный вариант. 1 - pipe, 2 - KC";
+				int l = 0;
+				cin >> l;
+				loadall(l);
+				break;
+			}
+			case 0:
+			{
+				return 0;
+			}
+			default:
+			{
+				cout << "Возникла ошибка" << endl;
+			}
+
+			}
 		}
-	}
 
 		return 0;
 	}

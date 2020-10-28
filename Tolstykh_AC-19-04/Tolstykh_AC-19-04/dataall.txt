@@ -1,0 +1,8 @@
+Identificator:100
+Dlina:1
+Diametr1
+Priznak1
+Identificator:100
+Dlina:1
+Diametr1
+Priznak1
