@@ -2,12 +2,26 @@
 #include <fstream>
 #include <string>
 using namespace std;
+template<typename T>
+T proverka(T min, T max, string h)
+{
+	T x;
+	cout << h;
+	while ((cin >> x).fail() || x > max || x < min)
+		{
+			cin.clear();
+			cin.ignore(10000, '\n');
+			cout << h;
+		}
+	return x;
+}
 struct pipe 
 {
 	int identificator;
 	float dlina;
 	float diametr;
 	bool priznak;
+	bool is_pipe;
 
 };
 struct KC
@@ -16,23 +30,10 @@ struct KC
 	int kolvo_tsehov;
 	int kolvo_tsehov_v_rabote;
 	float effektivnost;
+	bool is_KC;
 };
-int proverka(int min, int max)
-{
-int p = 0;
-do
-{
-	cin.clear();
-	cin.ignore(10000, '\n');
-	cout << "Введите пожалуйста коррректные данные: " << endl;
-} while (!(cin >> p) || p > max || p < min);
-
-	return p;
-}
-
-bool isNumber(char Symbol) /*принимает на вход символ и возвращает true если это число,иначе- false (для обработки строк)*/
-{
-	if (Symbol >= '0' && Symbol <= '9')
+ bool isNumber(char Symbol) 
+ {if (Symbol >= '0' && Symbol <= '9')
 		return true;
 	return false;
 
@@ -40,71 +41,42 @@ bool isNumber(char Symbol) /*принимает на вход символ и в
 pipe createpipe ()
 {
 	pipe p;
+	p.is_pipe == true;
 	p.identificator = 100;
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Определите пожалуйста признак в ремонте(1-в ремонте или 0-не в ремонте): " << endl;
-		cin >> p.priznak;
-	} 
-	while (cin.fail() || isNumber(p.priznak));
-	 do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Введите пожалуйста длину трубы(>0) : " << endl;
-	    cin>> p.dlina;
-	}
-	while (cin.fail() || p.dlina <= 0||isNumber(p.dlina)); 
-
-	do
-	{
-		cin.clear();
-		cin.ignore(10000,'\n');
-		cout << "Введите пожалуйста диаметр трубы(>0)" << endl;
-		cin >> p.diametr;
-	} 
-	while (cin.fail() || p.diametr <=
-		0|| isNumber(p.diametr));
+	p.priznak = proverka (0,1, "\n'Введите пожалуйста значения признака (в ремонте) : ");
+	p.dlina = proverka(1, 1000, "\n'Введите пожалуйста длину трубы(>0) : ");
+   p.diametr= proverka(1, 1000, "\n'Введите пожалуйста диамтер трубы(>0) : ");
 	return p;
 };
 KC createKC()
 {
 	KC k;
+	k.is_KC == true;
 	k.identificator = 100;
-	k.effektivnost = (float(k.kolvo_tsehov) - float(k.kolvo_tsehov_v_rabote)) / float((k.kolvo_tsehov));
 	cout << "Введите пожалуйста наименование КС : " << endl;
 	getline(cin, k.name);
 	cin >> k.name;
-	do
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "Введите пожалуйста количество цехов(>=1)" << endl;
-		cin >> k.kolvo_tsehov;
-	} while (cin.fail() || k.kolvo_tsehov < 1 || isNumber(k.kolvo_tsehov));
-	do
-	{
-		cout << "Введите пожалуйста количество цехов в работе" << endl;
-		cin >> k.kolvo_tsehov_v_rabote;
-	} while (cin.fail() || k.kolvo_tsehov_v_rabote > k.kolvo_tsehov || isNumber(k.kolvo_tsehov_v_rabote));
+	 k.effektivnost= proverka(1,100,"\'Введите пожалуйста значение эффективности:");
+	k.kolvo_tsehov=proverka(1,10000, "Введите пожалуйста количество цехов(>=1)");
+	 k.kolvo_tsehov_v_rabote=proverka(1,k.kolvo_tsehov, "Введите пожалуйста количество цехов в работе");
+
    return k;	
 };
 void Viewpipe(const pipe& p)
 {
-	cout << "\nidentificator:" << p.identificator << endl;
-	cout << "dlina:" << p.dlina << endl;
-	cout << "diametr:" << p.diametr << endl;
-	cout << "priznak:" << p.priznak << endl;
-}
+	
+		cout << "\nidentificator:" << p.identificator << endl;
+		cout << "dlina:" << p.dlina << endl;
+		cout << "diametr:" << p.diametr << endl;
+		cout << "priznak:" << p.priznak << endl;
+	}
 void ViewKC(const KC& k)
 {
-	cout << "\nidentificator:" << k.identificator << endl;
-	cout << "name:" << k.name << endl;
-	cout << "kolvo_tsehov:" << k.kolvo_tsehov << endl;
-	cout << "kolvo_tsehov_v_rabote:" << k.kolvo_tsehov_v_rabote << endl;
-	cout << "effektivnost:" << k.effektivnost << endl;
+		cout << "\nidentificator:" << k.identificator << endl;
+		cout << "name:" << k.name << endl;
+		cout << "kolvo_tsehov:" << k.kolvo_tsehov << endl;
+		cout << "kolvo_tsehov_v_rabote:" << k.kolvo_tsehov_v_rabote << endl;
+		cout << "effektivnost:" << k.effektivnost << endl;
 }
 void viewall(int v, const pipe& pi,const KC & st)
 {
@@ -120,10 +92,21 @@ void viewall(int v, const pipe& pi,const KC & st)
 	
 }
 
-void Editpipe(bool & status) 
+void Editpipe(pipe& p)
+
 {
-status = !status;
-}
+	if (p.priznak == 1)
+	{
+		p.priznak = 0;
+		cout << "\nТруба не в ремонте";
+	}
+	else
+	{
+		p.priznak = 1;
+		cout << "\nТруба в ремонте";
+	}
+};
+
 void EditKC(KC& k)
 {
 	cout << "\n1.Цех в работе";
@@ -140,8 +123,9 @@ void EditKC(KC& k)
 		{
 			k.kolvo_tsehov_v_rabote -= 1;
 		}
-	} while (cin.fail() || isNumber(int (choice)));
-}
+	} while (cin.fail() || isNumber(int(choice)));
+
+}; 
 void Savepipe(const pipe& p)
 {
 	ofstream fout;
@@ -159,7 +143,7 @@ void Savepipe(const pipe& p)
 void SaveKC(const KC& k)
 {
 	ofstream fout;
-	fout.open("datapipe.txt", ios::out);
+	fout.open("dataKC.txt", ios::out);
 	if (fout.is_open())
 	{
 		fout << "Identificator:" << k.identificator << endl;
@@ -188,7 +172,7 @@ void save(const pipe& p, const KC& k)
 	}
 
 	}
-void saveall(int s, const pipe& pi, const KC&st)
+void saveall(int s, const pipe& pi, const KC& st)
 {
 	switch (s)
 	{
@@ -198,25 +182,25 @@ void saveall(int s, const pipe& pi, const KC&st)
 	case 2:
 		SaveKC(st);
 		break;
-	case 3 :
+	case 3:
 		save(pi, st);
 	}
 }
 
 pipe Loadpipe()
-{
-	pipe p;
-	ifstream fin;
-	fin.open("datapipe.txt", ios::in);
-	if (fin.is_open())
-	{
-		fin >> p.dlina;
-		fin >> p.diametr;
-		fin >> p.priznak;
-		fin.close();
-		return p;
-	}
-}
+     {pipe p;
+		ifstream fin;
+		fin.open("datapipe.txt", ios::in);
+		if (fin.is_open())
+		{
+			fin >> p.dlina;
+			fin >> p.diametr;
+			fin >> p.priznak;
+			fin.close();
+			return p;
+		}
+	};
+
 KC LoadKC()
 {
 	KC k;
@@ -232,11 +216,26 @@ KC LoadKC()
 		return k;
 	}
 }
-
-
-void loadall(int l)
+void Load(pipe& p, KC& k)
 {
-	switch (l)
+	ifstream fin;
+	fin.open("dataall.txt", ios::in);
+	if (fin.is_open())
+	{
+		fin >> p.dlina;
+		fin >> p.diametr;
+		fin >> p.priznak;
+		fin >> k.name;
+		fin >> k.kolvo_tsehov;
+		fin >> k.kolvo_tsehov_v_rabote;
+		fin >> k.effektivnost;
+	}
+	fin.close();
+}
+
+void loadall(pipe&p, KC&k)
+{
+	switch (proverka(1,3,"\nВыберите 1-труба,2-КС,3-вместе :  "))
 	{
 	case 1:
 		Viewpipe(Loadpipe());
@@ -244,7 +243,9 @@ void loadall(int l)
 	case 2:
 		ViewKC(LoadKC());
 		break;
-
+	case 3:
+		Load(p,k);
+		break;
 	}
 }
 
@@ -266,56 +267,79 @@ void loadall(int l)
 		setlocale(LC_ALL, "Russian");
 		pipe pi;
 		KC st;
+		bool is_pipe = 0;
+		bool is_KC =0;
 		while (1)
 		{
 			PrintMenu();
 
-			switch (proverka(0, 7))
+			switch (proverka(0, 7, "Меню:"))
 			{
 			case 1:
 			{
 				pi = createpipe();
+				is_pipe == true;
 				break;
 			}
 			case 2:
 			{
 				st = createKC();
+				is_KC == true;
 				break;
 			}
+		
 			case 3:
-			{
-				cout << "Выберите пожалуйста нужный вариант. 1-pipe, 2- KC ";
-				int v = 0;
-				cin >> v;
-				viewall(v, pi, st);
-				break;
-			}
+				if (is_pipe == true && is_KC == true )
+				{
+					{
+						cout << "Выберите пожалуйста нужный вариант. 1-pipe, 2- KC ";
+						int v = 0;
+						cin >> v;
+						viewall(v, pi, st);
+						break;
+					}
+				}
+				else
+				{
+					cout << "Введите пожалуйста данные для пунктов 1,2";
+				}
 
 			case 4:
 			{
-				Editpipe(pi.priznak);
-				break;
+				if (is_pipe == true)
+				{
+					Editpipe(pi);
+					break;
+				}
 			}
 			case 5:
 			{
-				EditKC(st);
-				break;
+				if (is_KC == true)
+				{
+					EditKC(st);
+					break;
+				}
 			}
 			case 6:
 			{
-				cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all : ";
-				int s = 0;
-				cin >> s;
-				saveall(s, pi, st);
-				break;
+				if (is_pipe == true && is_KC == true)
+				{
+					cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all : ";
+					int s = 0;
+					cin >> s;
+					saveall(s, pi, st);
+					break;
+				}
+	
 			}
 			case 7:
 			{
-				cout << "Выберите пожалуйста нужный вариант. 1 - pipe, 2 - KC :  ";
-				int l = 0;
-				cin >> l;
-				loadall(l);
+				if (is_pipe == true && is_KC == true)
+				{
+				loadall(pi,st);
 				break;
+				}
+				
 			}
 			case 0:
 			{
