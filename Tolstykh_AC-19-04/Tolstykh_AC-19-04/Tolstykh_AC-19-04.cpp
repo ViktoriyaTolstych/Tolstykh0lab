@@ -1,6 +1,7 @@
 ﻿#include <iostream> 
 #include <fstream>
 #include <string>
+#include <vector>
 using namespace std;
 template<typename T>
 T proverka(T min, T max, string h)
@@ -261,12 +262,24 @@ void loadall(pipe&p, KC&k)
 		<< "7.Загрузить"<< endl
 		<< "0.Выйти" << endl;
 }
+	pipe& Selectpipe(vector<pipe>&g1)
+	{
+		unsigned int index = proverka(0u, g1.size(), "Введите индекс для трубы: ");
+		return g1[index - 1];
+	}
+	KC& SelectKC(vector<KC>& g2)
+	{
+		unsigned int index = proverka(0u, g2.size(), "Введите индекс для КС: ");
+		return g2[index - 1];
+	}
 
 	int main()
 	{
 		setlocale(LC_ALL, "Russian");
-		pipe pi;
-		KC st;
+		vector  <pipe> group1;
+		vector <KC> group2;
+		/*pipe pi;
+		KC st;*/
 		bool is_pipe = 0;
 		bool is_KC =0;
 		while (1)
@@ -277,12 +290,15 @@ void loadall(pipe&p, KC&k)
 			{
 			case 1:
 			{
+				pipe pi;
 				pi = createpipe();
+				group1.push_back(pi);
 				is_pipe == true;
 				break;
 			}
 			case 2:
 			{
+				KC st;
 				st = createKC();
 				is_KC == true;
 				break;
@@ -308,7 +324,7 @@ void loadall(pipe&p, KC&k)
 			{
 				if (is_pipe == true)
 				{
-					Editpipe(pi);
+					Editpipe(Selectpipe(group1));
 					break;
 				}
 			}
@@ -316,7 +332,7 @@ void loadall(pipe&p, KC&k)
 			{
 				if (is_KC == true)
 				{
-					EditKC(st);
+					EditKC(SelectKC(group2));
 					break;
 				}
 			}
@@ -327,6 +343,7 @@ void loadall(pipe&p, KC&k)
 					cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all : ";
 					int s = 0;
 					cin >> s;
+					for ()
 					saveall(s, pi, st);
 					break;
 				}
