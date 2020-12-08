@@ -19,13 +19,13 @@ T proverka(T less, T more)
 }
 std::istream& operator>>(std::istream& in, CKC& cs)
 {
-	cout << "Enter the name of the compressor station - ";
+	cout << "Пожалуйста введите имя КС n - ";
 	cin.ignore();
 	getline(cin, cs.name);
 
-	cout << "Enter the number of workshops - ";
+	cout << "Введите количество цехов - ";
 	cs.kolvo_tsehov = proverka(0, 1000);
-	cout << "Enter the number of workshop workers - ";
+	cout << "Введите количесво цехов в работе - ";
 	cs.kolvo_tsehov_v_rabote = proverka(0, cs.kolvo_tsehov);
 
 	cs.effektivnost = 1. / (rand() % 10);
@@ -35,25 +35,25 @@ std::istream& operator>>(std::istream& in, CKC& cs)
 
 std::istream& operator>> (std::istream& in, Cpipe& p)
 {
-	std::cout << "\nEnter the diameter in millimeters - ";
+	std::cout << "\nВведите диаметр ( в мм) - ";
 	p.diametr = proverka<double>(0, 10000);
-	std::cout << "Enter the length in meters - ";
+	std::cout << "Введите длину (в м ) - ";
 	p.dlina = proverka<double>(0, 10000);
 	std::cout << endl;
 	return in;
 }
 void menu()
 {
-	cout << "1. Add pipe" << endl
-		<< "2. Add compressor station" << endl
-		<< "3. Show objects" << endl
-		<< "4. Edit pipe" << endl 
-		<< "5. Edit compressor station" << endl 
-		<< "6. Search by filter" << endl
-		<< "7. Delete object" << endl 
-		<< "8. Save to file" << endl
-		<< "9. Download from file" << endl
-		<< "0. Exit" << endl 
+	cout << "1. Добавить трубу" << endl
+		<< "2. Добавить КС" << endl
+		<< "3. Показать объекты" << endl
+		<< "4. Редактировать трубу" << endl 
+		<< "5. Редактировать КС" << endl 
+		<< "6. Поиск по фильтру" << endl
+		<< "7. Удалить объекты" << endl 
+		<< "8. Сохранить в файл" << endl
+		<< "9. Загрузить из файла" << endl
+		<< "0. Выход" << endl 
 		<< endl << "Selected action - ";
 
 }
@@ -85,26 +85,27 @@ ifstream& operator >> (ifstream& in, vector<C>& object)
 	return in;
 }
 
-string checkRepair(Cpipe& p)//rename and class
+string checkRepair(Cpipe& p)
 {
-	return (p.priznak) ? "Unworking \n\n" : "Working \n\n";
+	return (p.priznak) ? "Не работает \n\n" : "В работе \n\n";
 }
 void EditAllPipes(vector<Cpipe>& pipes)
 {
-	cout << "0. Pipes working\n1. Pipes in repair\nChoose - ";
+	cout << "0. Труба в работе\n1. Труба не в работе\nChoose - ";
 	int choice = proverka(0, 1);
 	cout << endl;
 	for (Cpipe& i : pipes)
 	{
 		i.priznak = choice;
 	}
+
 }
 vector<Cpipe> EditOnePipe(vector<Cpipe>& pipes)
 {
-	cout << "Select id you want to edit: ";
+	cout << "Введите id который вы хотите изменить: ";
 	int k;
 	cin >> k;
-	cout << "0. Pipe working\n1. Pipe in repair\nChoose - ";
+	cout << "0.Труба в работе \n1. Труба не в работе\nChoose - ";
 	int choice = proverka(0, 1);
 	pipes[k].priznak = choice;
 	cout << endl;
@@ -112,7 +113,7 @@ vector<Cpipe> EditOnePipe(vector<Cpipe>& pipes)
 }
 void EditPipe(vector<Cpipe>& pipes)
 {
-	cout << "1. Edit all existing ones\n2. Edit one pipe\nSelect - ";
+	cout << "1. Изменить все существующие трубы\n2. Изменить одну трубу\nSelect - ";
 	if (proverka(1, 2) == 1)
 	{
 		cout << endl;
@@ -127,7 +128,7 @@ void EditPipe(vector<Cpipe>& pipes)
 
 vector<CKC> EditAllKC(vector<CKC>& cs)
 {
-	cout << "\n0. Start the workshop\n1. Stop the workshop\nSelect - ";
+	cout << "\n0. Запустить цеха\n1. Остановить цеха\nSelect - ";
 	int choice = proverka(0, 1);
 	cout << endl;
 	for (CKC& i : cs)
@@ -145,10 +146,10 @@ vector<CKC> EditAllKC(vector<CKC>& cs)
 }
 vector<CKC> EditOneKC(vector<CKC>& cs)
 {
-	cout << "Id of the compressor station you want to edit: ";
+	cout << "Id КС которую вы хотите изменить: ";
 	int k;
 	cin >> k;
-	cout << "\n0. Start the workshop\n1. Stop the workshop\nSelect - ";
+	cout << "\n0. Начать работу цеха\n1. Остановить работу цеха\nSelect - ";
 	if (proverka(0, 1) == 0)
 	{
 		if (cs[k].kolvo_tsehov > cs[k].kolvo_tsehov_v_rabote)
@@ -163,7 +164,7 @@ vector<CKC> EditOneKC(vector<CKC>& cs)
 }
 void EditCS(vector<CKC>& cs)
 {
-	cout << "1. Edit all existing ones\n2. Edit one cs\nSelect - ";
+	cout << "1. Изменить все существующие КС\n2. Изменить одну КС\nSelect - ";
 	if (proverka(1, 2) == 1)
 	{
 		cout << endl;
@@ -176,9 +177,9 @@ void EditCS(vector<CKC>& cs)
 	}
 
 }
-void Viewall(vector<Cpipe> pipes, vector<CKC> c)
+void Viewall(vector<Cpipe>&pipes, vector<CKC>&c)
 {
-	cout << "1. View all\n" << "2. View pipe\n" << "3. View compressor stations\nSelect - ";
+	cout << "1. Просмотр всего\n" << "2. Просмотр труб\n" << "3. Просмотр КС\nSelect - ";
 	switch (proverka(1, 3))
 	{
 	case 1:
@@ -186,38 +187,38 @@ void Viewall(vector<Cpipe> pipes, vector<CKC> c)
 		cout << endl;
 		for (Cpipe p : pipes)
 		{
-			cout << "Pipe id: " << p.identificator << std::endl << "diametr: " << p.diametr << std::endl
-				<< "length: " << p.dlina << std::endl << "pipe condition: " << checkRepair(p);
+			cout << " id трубы: " << p.identificator << std::endl << "димаетр:: " << p.diametr << std::endl
+				<< "длина: " << p.dlina << std::endl << "состояние трубы:: " << checkRepair(p);
 		}
 		for (CKC cs : c)
 		{
 			cout.precision(2);
-			cout << "\nCS id: " << cs.identificator << endl << "Name: " << cs.name
-				<< endl << "Quantity of workshops: " << cs.kolvo_tsehov << endl
-				<< "Quantity of workshop workers: " << cs.kolvo_tsehov_v_rabote << endl
-				<< "Efficiency: " << cs.effektivnost << endl << endl;
+			cout << "\nКС id: " << cs.identificator << endl << "Имя: " << cs.name
+				<< endl << "Количество цехов: " << cs.kolvo_tsehov << endl
+				<< "Количество цехов в работе: " << cs.kolvo_tsehov_v_rabote << endl
+				<< "Эффективность: " << cs.effektivnost << endl << endl;
 		}
 		break;
 	}
 	case 2:
 	{
-		cout << "Select id you want to output: ";
+		cout << "Выберите id который вы хотите вывести: ";
 		int OutPipe;
 		cin >> OutPipe;
-		cout << "Pipe id: " << pipes[OutPipe].identificator << endl << "diametr: " << pipes[OutPipe].diametr << endl
-			<< "length: " << pipes[OutPipe].dlina << endl << "pipe condition: " << checkRepair(pipes[OutPipe]);
+		cout << " id трубы : " << pipes[OutPipe].identificator << endl << "диаметр: " << pipes[OutPipe].diametr << endl
+			<< "длина: " << pipes[OutPipe].dlina << endl << "состояние трубы: " << checkRepair(pipes[OutPipe]);
 		break;
 	}
 	case 3:
 	{
-		cout << "Select id you want to output: ";
+		cout << "Выберите id который вы хотите вывести: ";
 		int OutKC;
 		cin >> OutKC;
 		cout.precision(2);
-		cout << "\nCS id: " << c[OutKC].identificator << endl << "Name: " << c[OutKC].name
-			<< endl << "Quantity of workshops: " << c[OutKC].kolvo_tsehov << endl
-			<< "Quantity of workshop workers: " << c[OutKC].kolvo_tsehov_v_rabote << endl
-			<< "Efficiency: " << c[OutKC].effektivnost << endl << endl;;
+		cout << "\nКС id: " << c[OutKC].identificator << endl << "Имя: " << c[OutKC].name
+			<< endl << "Количесвто цехов: " << c[OutKC].kolvo_tsehov << endl
+			<< "Количество цехов в работе: " << c[OutKC].kolvo_tsehov_v_rabote << endl
+			<< "Эффективность: " << c[OutKC].effektivnost << endl << endl;;
 		break;
 	}
 	}
@@ -226,7 +227,8 @@ void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 {
 	ofstream fout;
 	string name;
-	cout << "Enter name file: ";
+	cout << "Введите имя файла: ";
+	getline(cin,name);
 	cin >> name;
 	fout.open(name, ios::out);
 	if (fout.is_open())
@@ -257,7 +259,8 @@ void LoadAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 {
 	ifstream fin;
 	string name;
-	cout << "Enter name file: ";
+	cout << "Введите имя файла: ";
+	getline(cin, name);
 	cin >> name;
 	fin.open(name, ios::in);
 
@@ -310,8 +313,8 @@ void СonByFilterPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param
 	{
 		if (f(i, param))
 		{
-			cout << endl << "Pipe id: " << i.identificator << std::endl << "diametr: " << i.diametr << std::endl
-				<< "length: " << i.dlina << std::endl << "pipe condition: " << checkRepair(i);
+			cout << endl << "id трубы: " << i.identificator << std::endl << "диаметр: " << i.diametr << std::endl
+				<< "длина: " << i.dlina << std::endl << "состояние трубы: " << checkRepair(i);
 		}
 	}
 	cout << endl;
@@ -324,44 +327,45 @@ void СonByFilterCs(vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
 		if (f(i, param))
 		{
 			cout.precision(2);
-			cout << "\nCS id: " << i.identificator << endl << "Name: " << i.name
-				<< endl << "Quantity of workshops: " << i.kolvo_tsehov << endl
-				<< "Quantity of workshop workers: " << i.kolvo_tsehov_v_rabote << endl
-				<< "Efficiency: " << i.effektivnost << endl << endl;
+			cout << "\nКС id: " << i.identificator << endl << "Имя: " << i.name
+				<< endl << "Количество цехов: " << i.kolvo_tsehov << endl
+				<< "Количество цехов в работе: " << i.kolvo_tsehov_v_rabote << endl
+				<< "Эффективность: " << i.effektivnost << endl << endl;
 		}
 	}
 	cout << endl;
 }
 void SearchByFilterPipes(vector<Cpipe>& pipes)
 {
-	cout << "\n1. By ID\n2. By condition\nSelect action - ";
+	cout << "\n1. По ID\n2. По состоянию\nSelect action - ";
 	if (proverka(1, 2) == 1)
 	{
-		cout << "Enter ID: ";
+		cout << "Введите ID: ";
 		int ch = proverka(0, 100);
 		СonByFilterPipes(pipes, SearchById, ch);
 	}
 	else
 	{
-		cout << "\n1. Working\n2. Unworking\nSelect action - ";
+		cout << "\n1. В работе\n2. Не в работе\nSelect action - ";
 		int choice = proverka(1, 2);
 		СonByFilterPipes(pipes, SearchByRepair, choice);
 	}
 }
 void SearchByFilterCs(vector<CKC>& cs)
 {
-	cout << "\n1. By name\n" << "2. By percentage of unused workshops\nSelect action - ";
+	cout << "\n1. По имени\n" << "2. По проценту неиспользованных цехов\nSelect action - ";
 	if (proverka(1, 2) == 1)
 	{
 		int counter = 0;
-		cout << "\nEnter a name from this list: ";
+		cout << "\nВведите имя : ";
 		string name;
+		getline(cin, name);
 		cin >> name;
 		СonByFilterCs(cs, SearchByName, name);
 	}
 	else
 	{
-		cout << "\nEnter the number of percentages - ";
+		cout << "\nВведите процент - ";
 		int choice = proverka(0, 100);
 		СonByFilterCs(cs, SearchByPercent, choice);
 	}
@@ -369,18 +373,18 @@ void SearchByFilterCs(vector<CKC>& cs)
 
 void DeleteObject(vector <Cpipe>& pipes, vector <CKC>& cs)
 {
-	cout << "1. Delete pipe\n2. Delete compressor station\nSelect action - ";
+	cout << "1. Удалить трубу\n2. Удалить КС\nSelect action - ";
 	int choice = proverka(1, 2);
 	if (choice == 1)
 	{
-		cout << "Enter ID: ";
+		cout << "Введите ID: ";
 		int ch = proverka(0, 100);
 		pipes.erase(pipes.begin() + ch);
 		cout << endl;
 	}
 	else
 	{
-		cout << "Enter ID: ";
+		cout << "Введите ID: ";
 		int ch = proverka(0, 100);
 		cs.erase(cs.begin() + ch);
 		cout << endl;
@@ -389,6 +393,7 @@ void DeleteObject(vector <Cpipe>& pipes, vector <CKC>& cs)
 
 int main()
 {
+	setlocale(LC_ALL, "Russian");
 	vector <Cpipe> pipes;
 	vector <CKC> cs;
 	while (true)
@@ -427,7 +432,7 @@ int main()
 		}
 		case 6:
 		{
-			cout << "1. Search by pipes\n2. Search by compressor stations\nSelect action - ";
+			cout << "1. Поиск по трубам\n2. Поиск по КС\nSelect action - ";
 			if (proverka(1, 2) == 1)
 				SearchByFilterPipes(pipes);
 			else
