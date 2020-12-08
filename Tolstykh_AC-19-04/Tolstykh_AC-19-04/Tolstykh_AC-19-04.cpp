@@ -2,43 +2,292 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include "CKC.h"
+#include "Cpipe.h"
 using namespace std;
 template<typename T>
-T proverka(T min, T max, string h)
+T proverka(T less, T more)
 {
 	T x;
-	cout << h;
-	while ((cin >> x).fail() || x > max || x < min)
+	while ((cin >> x).fail() || x > more || x < less)
 		{
+		cout<<"Пожалуйста введите корректные данные"
 			cin.clear();
 			cin.ignore(10000, '\n');
-			cout << h;
 		}
 	return x;
 }
-struct pipe 
+std::istream& operator>>(std::istream& in, CKC& cs)
 {
-	int identificator;
-	float dlina;
-	float diametr;
-	bool priznak;
-	bool is_pipe;
+	cout << "Enter the name of the compressor station - ";
+	cin.ignore();
+	getline(cin, cs.name);
 
-};
-struct KC
-{   int identificator;
+	cout << "Enter the number of workshops - ";
+	cs.kolvo_tsehov = proverka(0, 1000);
+	cout << "Enter the number of workshop workers - ";
+	cs.kolvo_tsehov_v_rabote = proverka(0, cs.kolvo_tsehov);
+
+	cs.effektivnost = 1. / (rand() % 10);
+	cout << endl;
+	return in;
+}
+
+std::istream& operator>> (std::istream& in, Cpipe& p)
+{
+	std::cout << "\nEnter the diameter in millimeters - ";
+	p.diametr = proverka<double>(0, 10000);
+	std::cout << "Enter the length in meters - ";
+	p.dlina = proverka<double>(0, 10000);
+	std::cout << endl;
+	return in;
+}
+void menu()
+{
+	cout << "1. Add pipe" << endl
+		<< "2. Add compressor station" << endl
+		<< "3. Show objects" << endl
+		<< "4. Edit pipe" << endl 
+		<< "5. Edit compressor station" << endl 
+		<< "6. Search by filter" << endl
+		<< "7. Delete object" << endl 
+		<< "8. Save to file" << endl
+		<< "9. Download from file" << endl
+		<< "0. Exit" << endl 
+		<< endl << "Selected action - ";
+
+}
+template<typename C>
+ostream& operator << (ostream& out, const vector<C>& object)// non pc
+{
+	for (const C& i : object)
+	{
+		out << i;
+	}
+	return out;
+}
+template<typename C>
+ofstream& operator << (ofstream& fout, const vector<C>& object)
+{
+	for (const C& c : object)
+	{
+		fout << c;
+	}
+	return fout;
+}
+template <typename C>
+ifstream& operator >> (ifstream& in, vector<C>& object)
+{
+	for (C& c : object)
+	{
+		in >> c;
+	}
+	return in;
+}
+
+string checkRepair(Cpipe& p)//rename and class
+{
+	return (p.priznak) ? "Unworking \n\n" : "Working \n\n";
+}
+void EditAllPipes(vector<Cpipe>& pipes)
+{
+	cout << "0. Pipes working\n1. Pipes in repair\nChoose - ";
+	int choice = proverka(0, 1);
+	cout << endl;
+	for (Cpipe& i : pipes)
+	{
+		i.priznak = choice;
+	}
+}
+vector<Cpipe> EditOnePipe(vector<Cpipe>& pipes)
+{
+	cout << "Select id you want to edit: ";
+	int k;
+	cin >> k;
+	cout << "0. Pipe working\n1. Pipe in repair\nChoose - ";
+	int choice = proverka(0, 1);
+	pipes[k].priznak = choice;
+	cout << endl;
+	return pipes;
+}
+void EditPipe(vector<Cpipe>& pipes)
+{
+	cout << "1. Edit all existing ones\n2. Edit one pipe\nSelect - ";
+	if (proverka(1, 2) == 1)
+	{
+		cout << endl;
+		EditAllPipes(pipes);
+	}
+	else
+	{
+		cout << endl;
+		EditOnePipe(pipes);
+	}
+}
+
+vector<CKC> EditAllKC(vector<CKC>& cs)
+{
+	cout << "\n0. Start the workshop\n1. Stop the workshop\nSelect - ";
+	int choice = proverka(0, 1);
+	cout << endl;
+	for (CKC& i : cs)
+	{
+		if (choice == 0 && (i.kolvo_tsehov > i.kolvo_tsehov_v_rabote))
+		{
+			i.kolvo_tsehov_v_rabote += 1;
+		}
+		else if (i.kolvo_tsehov_v_rabote > 0)
+		{
+			i.kolvo_tsehov_v_rabote -= 1;
+		}
+	}
+	return cs;
+}
+vector<CKC> EditOneKC(vector<CKC>& cs)
+{
+	cout << "Id of the compressor station you want to edit: ";
+	int k;
+	cin >> k;
+	cout << "\n0. Start the workshop\n1. Stop the workshop\nSelect - ";
+	if (proverka(0, 1) == 0)
+	{
+		if (cs[k].kolvo_tsehov > cs[k].kolvo_tsehov_v_rabote)
+			cs[k].kolvo_tsehov_v_rabote += 1;
+	}
+	else
+	{
+		if (cs[k].kolvo_tsehov_v_rabote > 0)
+			cs[k].kolvo_tsehov_v_rabote -= 1;
+	}
+	return cs;
+}
+void EditCS(vector<CKC>& cs)
+{
+	cout << "1. Edit all existing ones\n2. Edit one cs\nSelect - ";
+	if (proverka(1, 2) == 1)
+	{
+		cout << endl;
+		EditAllKC(cs);
+	}
+	else
+	{
+		cout << endl;
+		EditOneKC(cs);
+	}
+
+}
+void Viewall(vector<Cpipe> pipes, vector<CKC> c)
+{
+	cout << "1. View all\n" << "2. View pipe\n" << "3. View compressor stations\nSelect - ";
+	switch (proverka(1, 3))
+	{
+	case 1:
+	{
+		cout << endl;
+		for (Cpipe p : pipes)
+		{
+			cout << "Pipe id: " << p.identificator << std::endl << "diametr: " << p.diametr << std::endl
+				<< "length: " << p.dlina << std::endl << "pipe condition: " << checkRepair(p);
+		}
+		for (CKC cs : c)
+		{
+			cout.precision(2);
+			cout << "\nCS id: " << cs.identificator << endl << "Name: " << cs.name
+				<< endl << "Quantity of workshops: " << cs.kolvo_tsehov << endl
+				<< "Quantity of workshop workers: " << cs.kolvo_tsehov_v_rabote << endl
+				<< "Efficiency: " << cs.effectivnost << endl << endl;
+		}
+		break;
+	}
+	case 2:
+	{
+		cout << "Select id you want to output: ";
+		int OutPipe;
+		cin >> OutPipe;
+		cout << "Pipe id: " << pipes[OutPipe].identificator << endl << "diametr: " << pipes[OutPipe].diametr << endl
+			<< "length: " << pipes[OutPipe].dlina << endl << "pipe condition: " << checkRepair(pipes[OutPipe]);
+		break;
+	}
+	case 3:
+	{
+		cout << "Select id you want to output: ";
+		int OutKC;
+		cin >> OutKC;
+		cout.precision(2);
+		cout << "\nCS id: " << c[OutKC].identificator << endl << "Name: " << c[OutKC].name
+			<< endl << "Quantity of workshops: " << c[OutKC].kolvo_tsehov << endl
+			<< "Quantity of workshop workers: " << c[OutKC].kolvo_tsehov_v_rabote << endl
+			<< "Efficiency: " << c[OutKC].effektivnost << endl << endl;;
+		break;
+	}
+	}
+}
+void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
+{
+	ofstream fout;
 	string name;
-	int kolvo_tsehov;
-	int kolvo_tsehov_v_rabote;
-	float effektivnost;
-	bool is_KC;
-};
- bool isNumber(char Symbol) 
- {if (Symbol >= '0' && Symbol <= '9')
-		return true;
-	return false;
+	cout << "Enter name file: ";
+	cin >> name;
+	fout.open(name, ios::out);
+	if (fout.is_open())
+	{
+		fout << pipes.size() << endl;
+		fout << cs.size() << endl;
+		fout << endl;
 
-};
+		if (pipes.size() != 0 || cs.size() != 0)
+		{
+			for (const Cpipe& p : pipes)
+			{
+				fout << p.identificator << endl << p.diametr << endl
+					<< p.dlina << endl << p.priznak << endl << endl;
+			}
+			for (const CKC& i : cs)
+			{
+				fout.precision(2);
+				fout << i.identificator << endl << i.name << endl << i.kolvo_tsehov << endl
+					<< i.kolvo_tsehov_v_rabote << endl << i.effektivnost << endl << endl;
+			}
+			cout << "Saved\n\n";
+		}
+		fout.close();
+	}
+}
+void LoadAll(vector<Cpipe>& pipes, vector<CKC>& cs)
+{
+	ifstream fin;
+	string name;
+	cout << "Enter name file: ";
+	cin >> name;
+	fin.open(name, ios::in);
+
+	if (fin.is_open())
+	{
+		int lenpipe, lencs;
+		fin >> lenpipe;
+		fin >> lencs;
+		pipes.resize(lenpipe);
+		cs.resize(lencs);
+		for (Cpipe& p : pipes)
+		{
+			fin >> p.identificator;
+			fin >> p.diametr;
+			fin >> p.dlina;
+			fin >> p.priznak;
+		}
+		for (CKC& c : cs)
+		{
+			fin >> c.identificator;
+			fin >> c.name;
+			fin >> c.kolvo_tsehov;
+			fin >> c.kolvo_tsehov_v_rabote;
+			fin >> c.effektivnost;
+		}
+		fin.close();
+		cout << "Data downloaded\n\n";
+	}
+}
+
 pipe createpipe ()
 {
 	pipe p;
@@ -343,7 +592,7 @@ void loadall(pipe&p, KC&k)
 					cout << "Выберите поджалуйста нужное :1-pipe, 2- KC, 3-all : ";
 					int s = 0;
 					cin >> s;
-					for ()
+					for ();
 					saveall(s, pi, st);
 					break;
 				}
