@@ -56,33 +56,6 @@ void menu()
 		<< endl << "Selected action - ";
 
 }
-template<typename C>
-ostream& operator << (ostream& out, const vector<C>& object)
-{
-	for (const C& i : object)
-	{
-		out << i;
-	}
-	return out;
-}
-template<typename C>
-ofstream& operator << (ofstream& fout, const vector<C>& object)
-{
-	for (const C& c : object)
-	{
-		fout << c;
-	}
-	return fout;
-}
-template <typename C>
-ifstream& operator >> (ifstream& in, vector<C>& object)
-{
-	for (C& c : object)
-	{
-		in >> c;
-	}
-	return in;
-}
 
 string checkRepair(Cpipe& p)
 {

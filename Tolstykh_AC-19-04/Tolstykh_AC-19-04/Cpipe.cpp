@@ -12,7 +12,7 @@ Cpipe::Cpipe()
 }
 
 
-std::string checkRepair(const Cpipe& p)//rename and class
+std::string checkRepair(const Cpipe& p)
 {
 	return (p.priznak) ? "Unworking \n\n" : "Working \n\n";
 
