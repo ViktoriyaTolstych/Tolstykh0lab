@@ -53,7 +53,7 @@ void menu()
 		<< "8. Сохранить в файл" << endl
 		<< "9. Загрузить из файла" << endl
 		<< "0. Выход" << endl 
-		<< endl << "Selected action - ";
+		<< endl << "Выберите действие - ";
 
 }
 
@@ -222,7 +222,7 @@ void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 				fout << i.identificator << endl << i.name << endl << i.kolvo_tsehov << endl
 					<< i.kolvo_tsehov_v_rabote << endl << i.effektivnost << endl << endl;
 			}
-			cout << "Saved\n\n";
+			cout << "Сохранено\n\n";
 		}
 		fout.close();
 	}
