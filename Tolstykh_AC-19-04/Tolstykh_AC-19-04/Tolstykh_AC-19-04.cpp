@@ -307,7 +307,7 @@ bool SearchByPercent(CKC& cs, int param)
 	return 100 * (1 - (1. * cs.kolvo_tsehov_v_rabote) / cs.kolvo_tsehov) >= param;
 }
 template <typename N>
-void СonByFilterPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
+void FiltrationPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
 {
 	for (Cpipe& i : vect)
 	{
@@ -320,7 +320,7 @@ void СonByFilterPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param
 	cout << endl;
 }
 template <typename N>
-void СonByFilterCs(vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
+void FiltrationCs(vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
 {
 	for (CKC& i : vect)
 	{
@@ -342,13 +342,13 @@ void SearchByFilterPipes(vector<Cpipe>& pipes)
 	{
 		cout << "Введите ID: ";
 		int ch = proverka(0, 100);
-		СonByFilterPipes(pipes, SearchById, ch);
+		FiltrationPipes(pipes, SearchById, ch);
 	}
 	else
 	{
 		cout << "\n1. В работе\n2. Не в работе\nSelect action - ";
 		int choice = proverka(1, 2);
-		СonByFilterPipes(pipes, SearchByRepair, choice);
+		FiltrationPipes(pipes, SearchByRepair, choice);
 	}
 }
 void SearchByFilterCs(vector<CKC>& cs)
@@ -361,13 +361,13 @@ void SearchByFilterCs(vector<CKC>& cs)
 		string name;
 		getline(cin, name);
 		cin >> name;
-		СonByFilterCs(cs, SearchByName, name);
+		FiltrationCs(cs, SearchByName, name);
 	}
 	else
 	{
 		cout << "\nВведите процент - ";
 		int choice = proverka(0, 100);
-		СonByFilterCs(cs, SearchByPercent, choice);
+		FiltrationCs(cs, SearchByPercent, choice);
 	}
 }
 
