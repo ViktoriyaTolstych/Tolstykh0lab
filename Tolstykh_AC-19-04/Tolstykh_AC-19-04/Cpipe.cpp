@@ -9,6 +9,7 @@ int Cpipe::CountP = 0;
 Cpipe::Cpipe()
 {
 	identificator = CountP++;
+	cout << "ID для данной трубы = " << identificator << endl;
 }
 
 

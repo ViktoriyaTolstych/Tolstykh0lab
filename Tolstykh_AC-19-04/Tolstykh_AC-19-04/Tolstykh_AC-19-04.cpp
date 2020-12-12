@@ -213,7 +213,7 @@ void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 		{
 			for (const Cpipe& p : pipes)
 			{
-				fout << p.identificator << endl << p.diametr << endl
+				fout << p.identificator << endl << p.diametr << endl //endl заменить на "\t"
 					<< p.dlina << endl << p.priznak << endl << endl;
 			}
 			for (const CKC& i : cs)
@@ -292,7 +292,7 @@ void FiltrationPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
 	cout << endl;
 }
 template <typename N>
-void FiltrationCs(vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
+void FiltrationCs( vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
 {
 	for (CKC& i : vect)
 	{

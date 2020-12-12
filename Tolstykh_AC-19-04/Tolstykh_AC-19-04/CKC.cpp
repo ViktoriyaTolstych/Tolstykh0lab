@@ -7,4 +7,5 @@ CKC::CKC()
 {
 	identificator = CountKC;
 	CountKC++;
+	cout << "ID для данной КС = " << identificator << endl;
 }
