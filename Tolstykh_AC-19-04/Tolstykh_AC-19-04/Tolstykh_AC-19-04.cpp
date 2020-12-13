@@ -8,6 +8,9 @@
 
 using namespace std;
 
+#define mapCpipe map<int,Cpipe>
+#define mapCKC  map<int, CKC>
+
 void menu()
 {
 	cout << "1. Добавить трубу" << endl
@@ -34,70 +37,46 @@ void menu()
 //	}
 //
 //}
-void EditOnePipe(map<int,Cpipe>& pipes)
-{
-	cout << "Введите id который вы хотите изменить: ";
-	int k;
-	cin >> k;
 
-	cout << "0.Труба в работе \n1. Труба не в работе\nВыберите - " << endl;
-	int choice = proverka(0, 1);
-
-	pipes[k].priznak = choice;
-}
-void EditPipe(const unordered_map<int, Cpipe>& pipes)
-{
-	cout << "1. Изменить все существующие трубы\n2. Изменить одну трубу\nВыберите - ";
-	if (proverka(1, 2) == 1)
-	{
-		cout << endl;
-		EditAllPipes(pipes);
-	}
-	else
-	{
-		cout << endl;
-		EditOnePipe(pipes);
-	}
-}
-
- int EditAllKC(const unordered_map<int, CKC>&  cs)
+ void EditAllKC(mapCKC&  compressors)
 {
 	std::cout << "\n0. Запустить цеха\n1. Остановить цеха\nВыберите - ";
 	int choice = proverka(0, 1);
 	std::cout << endl;
-	for (CKC& i : cs)
+	for (auto& item : compressors)
 	{
-		if (choice == 0 && (i.kolvo_tsehov > i.kolvo_tsehov_v_rabote))
+		//auto key = item.first;
+		auto cs = item.second;
+
+		if (choice == 0 && (cs.kolvo_tsehov > cs.kolvo_tsehov_v_rabote))
 		{
-			i.kolvo_tsehov_v_rabote += 1;
+			cs.kolvo_tsehov_v_rabote += 1;
 		}
-		else if (i.kolvo_tsehov_v_rabote > 0)
+		else if (cs.kolvo_tsehov_v_rabote > 0)
 		{
-			i.kolvo_tsehov_v_rabote -= 1;
+			cs.kolvo_tsehov_v_rabote -= 1;
 		}
 	}
-	return cs;
 }
-vector<int> EditOneKC(const unordered_map<int, CKC>& cs)
-{
+vector<int> EditOneKC(mapCKC& compressors)
 	cout << "Id КС которую вы хотите изменить: ";
-	int k;
-	cin >> k;
+auto cs = item.second;
 	cout << "\n0. Начать работу цеха\n1. Остановить работу цеха\nВыберите - ";
 	if (proverka(0, 1) == 0)
 	{
-		if (cs[k].kolvo_tsehov > cs[k].kolvo_tsehov_v_rabote)
-			cs[k].kolvo_tsehov_v_rabote += 1;
+		if (cs.kolvo_tsehov > cs.kolvo_tsehov_v_rabote)
+			cs.kolvo_tsehov_v_rabote += 1;
 	}
 	else
 	{
-		if (cs[k].kolvo_tsehov_v_rabote > 0)
-			cs[k].kolvo_tsehov_v_rabote -= 1;
+		if (cs.kolvo_tsehov_v_rabote > 0)
+			cs.kolvo_tsehov_v_rabote -= 1;
 	}
 	return cs;
 }
-void EditCS(const unordered_map<int, CKC>& cs)
+void EditCS(mapCKC& compressors)
 {
+	auto cs = item.second;
 	{
 		std::cout << "1. Изменить КС\n2. Изменения КС больше не требуются\nВыберите - ";
 		do
@@ -108,7 +87,7 @@ void EditCS(const unordered_map<int, CKC>& cs)
 
 	}
 	
-void Viewall(const unordered_map <int, Cpipe>&pipes, const unordered_map <int,CKC>&c)
+void Viewall(mapCpipe & pipes, mapCKC & compressors)
 {
 	cout << "1. Просмотр всего\n" << "2. Просмотр труб\n" << "3. Просмотр КС\nВыберите - ";
 	switch (proverka(1, 3))
@@ -315,13 +294,21 @@ int main()
 		{
 		case 1:
 		{
-			while (1) {
-				Cpipe pipe;
-				cin >> p;
-				pipes.insert({ p.Getid(), p });
+				vector<int> vec;
+			while (1)
+			{
+				cout << "Введите ID" << endl;
+				vec.push_back(get_value(0, Pipe::Maxid));
 				cout << "Добавить еще?" << endl << "\t 0. Нет" << endl << "\t 1. Да" << endl;
 				if (get_value(0, 1) == 0)
 					break;
+			}
+			for (auto i : vec)
+			{
+				if (map.find(i) != map.end())
+					map.find(i)->second.change_status();
+			}
+			break;
 			
 		}
 		case 2:
