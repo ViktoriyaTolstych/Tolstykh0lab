@@ -1,79 +1,51 @@
 ﻿#include <iostream> 
 #include <fstream>
 #include <string>
-#include <vector>
 #include "CKC.h"
 #include "Cpipe.h"
 #include "utility.h"
+#include <map>
+
 using namespace std;
 
-std::istream& operator>>(std::istream& in, CKC& cs)
-{
-	cout << "Пожалуйста введите имя КС n - ";
-	cin.ignore();
-	getline(cin, cs.name);
-	cout << "Введите количество цехов - ";
-	cs.kolvo_tsehov = proverka(0, 1000);
-	cout << "Введите количесво цехов в работе - ";
-	cs.kolvo_tsehov_v_rabote = proverka(0, cs.kolvo_tsehov);
-
-	cs.effektivnost = 1. / (rand() % 10);
-	cout << endl;
-	return in;
-}
-
-std::istream& operator>> (std::istream& in, Cpipe& p)
-{
-	std::cout << "\nВведите диаметр ( в мм) - ";
-	p.diametr = proverka<double>(0, 10000);
-	std::cout << "Введите длину (в м ) - ";
-	p.dlina = proverka<double>(0, 10000);
-	std::cout << endl;
-	return in;
-}
 void menu()
 {
 	cout << "1. Добавить трубу" << endl
 		<< "2. Добавить КС" << endl
 		<< "3. Показать объекты" << endl
-		<< "4. Редактировать трубу" << endl 
-		<< "5. Редактировать КС" << endl 
+		<< "4. Редактировать трубу" << endl
+		<< "5. Редактировать КС" << endl
 		<< "6. Поиск по фильтру" << endl
-		<< "7. Удалить объекты" << endl 
+		<< "7. Удалить объекты" << endl
 		<< "8. Сохранить в файл" << endl
 		<< "9. Загрузить из файла" << endl
-		<< "0. Выход" << endl 
+		<< "0. Выход" << endl
 		<< endl << "Выберите действие - ";
 
 }
-
-string checkRepair(Cpipe& p)
-{
-	return (p.priznak) ? "Не работает \n\n" : "В работе \n\n";
-}
-void EditAllPipes(vector<Cpipe>& pipes)
-{
-	cout << "0. Труба в работе\n1. Труба не в работе\nВыберите - ";
-	int choice = proverka(0, 1);
-	cout << endl;
-	for (Cpipe& i : pipes)
-	{
-		i.priznak = choice;
-	}
-
-}
-vector<Cpipe> EditOnePipe(vector<Cpipe>& pipes)
+//void EditAllPipes(const unordered_map<int, Cpipe>& p, const unordered_map<int, CKC>& c)
+//{
+//	std:: cout << "0. Труба в работе\n1. Труба не в работе\nВыберите - ";
+//	int choice = proverka(0, 1);
+//	std::cout << endl;
+//	for (Cpipe& i : p)
+//	{
+//		i.priznak = choice;
+//	}
+//
+//}
+void EditOnePipe(map<int,Cpipe>& pipes)
 {
 	cout << "Введите id который вы хотите изменить: ";
 	int k;
 	cin >> k;
-	cout << "0.Труба в работе \n1. Труба не в работе\nВыберите - ";
+
+	cout << "0.Труба в работе \n1. Труба не в работе\nВыберите - " << endl;
 	int choice = proverka(0, 1);
+
 	pipes[k].priznak = choice;
-	cout << endl;
-	return pipes;
 }
-void EditPipe(vector<Cpipe>& pipes)
+void EditPipe(const unordered_map<int, Cpipe>& pipes)
 {
 	cout << "1. Изменить все существующие трубы\n2. Изменить одну трубу\nВыберите - ";
 	if (proverka(1, 2) == 1)
@@ -88,11 +60,11 @@ void EditPipe(vector<Cpipe>& pipes)
 	}
 }
 
-vector<CKC> EditAllKC(vector<CKC>& cs)
+ int EditAllKC(const unordered_map<int, CKC>&  cs)
 {
-	cout << "\n0. Запустить цеха\n1. Остановить цеха\nВыберите - ";
+	std::cout << "\n0. Запустить цеха\n1. Остановить цеха\nВыберите - ";
 	int choice = proverka(0, 1);
-	cout << endl;
+	std::cout << endl;
 	for (CKC& i : cs)
 	{
 		if (choice == 0 && (i.kolvo_tsehov > i.kolvo_tsehov_v_rabote))
@@ -106,12 +78,12 @@ vector<CKC> EditAllKC(vector<CKC>& cs)
 	}
 	return cs;
 }
-vector<CKC> EditOneKC(vector<CKC>& cs)
+vector<int> EditOneKC(const unordered_map<int, CKC>& cs)
 {
 	cout << "Id КС которую вы хотите изменить: ";
 	int k;
 	cin >> k;
-	cout << "\n0. Начать работу цеха\n1. Остановить работу цеха\nSelect - ";
+	cout << "\n0. Начать работу цеха\n1. Остановить работу цеха\nВыберите - ";
 	if (proverka(0, 1) == 0)
 	{
 		if (cs[k].kolvo_tsehov > cs[k].kolvo_tsehov_v_rabote)
@@ -124,22 +96,19 @@ vector<CKC> EditOneKC(vector<CKC>& cs)
 	}
 	return cs;
 }
-void EditCS(vector<CKC>& cs)
+void EditCS(const unordered_map<int, CKC>& cs)
 {
-	cout << "1. Изменить все существующие КС\n2. Изменить одну КС\nВыберите - ";
-	if (proverka(1, 2) == 1)
 	{
-		cout << endl;
-		EditAllKC(cs);
-	}
-	else
-	{
-		cout << endl;
-		EditOneKC(cs);
-	}
+		std::cout << "1. Изменить КС\n2. Изменения КС больше не требуются\nВыберите - ";
+		do
+		{
+			std::cout << endl;
+			EditOneKC(cs);
+		} while ((proverka(1, 2) == 2));
 
-}
-void Viewall(vector<Cpipe>&pipes, vector<CKC>&c)
+	}
+	
+void Viewall(const unordered_map <int, Cpipe>&pipes, const unordered_map <int,CKC>&c)
 {
 	cout << "1. Просмотр всего\n" << "2. Просмотр труб\n" << "3. Просмотр КС\nВыберите - ";
 	switch (proverka(1, 3))
@@ -185,7 +154,7 @@ void Viewall(vector<Cpipe>&pipes, vector<CKC>&c)
 	}
 	}
 }
-void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
+void SaveAll(const unordered_map<int,Cpipe>& p, const unordered_map<int,CKC>& i)
 {
 	ofstream fout;
 	string name;
@@ -201,14 +170,14 @@ void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 
 		if (pipes.size() != 0 || cs.size() != 0)
 		{
-			for (const Cpipe& p : pipes)
+			for (const auto& p : pipes)
 			{
-				fout << p.identificator << endl << p.diametr << endl //endl заменить на "\t"
+				fout << p.identificator << endl << p.diametr << endl 
 					<< p.dlina << endl << p.priznak << endl << endl;
 			}
-			for (const CKC& i : cs)
+			for (const auto& i : cs)
 			{
-				fout.precision(2);
+				/*fout.precision(2);*/
 				fout << i.identificator << endl << i.name << endl << i.kolvo_tsehov << endl
 					<< i.kolvo_tsehov_v_rabote << endl << i.effektivnost << endl << endl;
 			}
@@ -217,7 +186,7 @@ void SaveAll(vector<Cpipe>& pipes, vector<CKC>& cs)
 		fout.close();
 	}
 }
-void LoadAll(vector<Cpipe>& pipes, vector<CKC>& cs)
+void LoadAll(const unordered_map<int, Cpipe>& p, const unordered_map<int, CKC>& cs)
 {
 	ifstream fin;
 	string name;
@@ -269,7 +238,7 @@ bool SearchByPercent(CKC& cs, int param)
 	return 100 * (1 - (1. * cs.kolvo_tsehov_v_rabote) / cs.kolvo_tsehov) >= param;
 }
 template <typename N>
-void FiltrationPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
+void FiltrationPipes(list<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
 {
 	for (Cpipe& i : vect)
 	{
@@ -282,7 +251,7 @@ void FiltrationPipes(vector<Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
 	cout << endl;
 }
 template <typename N>
-void FiltrationCs( vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
+void FiltrationCs( list<CKC>& map, bool(*f)(CKC& p, N param), N param)
 {
 	for (CKC& i : vect)
 	{
@@ -297,7 +266,7 @@ void FiltrationCs( vector<CKC>& vect, bool(*f)(CKC& p, N param), N param)
 	}
 	cout << endl;
 }
-void SearchByFilterPipes(vector<Cpipe>& pipes)
+void SearchByFilterPipes(const unordered_map<Cpipe>& pipes)
 {
 	cout << "\n1. По ID\n2. По состоянию\nВыберите действие - ";
 	if (proverka(1, 2) == 1)
@@ -313,7 +282,7 @@ void SearchByFilterPipes(vector<Cpipe>& pipes)
 		FiltrationPipes(pipes, SearchByRepair, choice);
 	}
 }
-void SearchByFilterCs(vector<CKC>& cs)
+void SearchByFilterCs(const unordered_map<CKC>& cs)
 {
 	cout << "\n1. По имени\n" << "2. По проценту неиспользованных цехов\nSelect action - ";
 	if (proverka(1, 2) == 1)
@@ -333,31 +302,12 @@ void SearchByFilterCs(vector<CKC>& cs)
 	}
 }
 
-void DeleteObject(vector <Cpipe>& pipes, vector <CKC>& cs)
-{
-	cout << "1. Удалить трубу\n2. Удалить КС\nSelect action - ";
-	int choice = proverka(1, 2);
-	if (choice == 1)
-	{
-		cout << "Введите ID: ";
-		int ch = proverka(0, 100);
-		pipes.erase(pipes.begin() + ch);
-		cout << endl;
-	}
-	else
-	{
-		cout << "Введите ID: ";
-		int ch = proverka(0, 100);
-		cs.erase(cs.begin() + ch);
-		cout << endl;
-	}
-}
 
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	vector <Cpipe> pipes;
-	vector <CKC> cs;
+	 unordered_map <int,Cpipe> pipes;
+	 unordered_map <int,CKC> cs;
 	while (true)
 	{
 		menu();
@@ -365,17 +315,23 @@ int main()
 		{
 		case 1:
 		{
-			Cpipe p;
-			cin >> p;
-			pipes.push_back(p);
-			break;
+			while (1) {
+				Cpipe pipe;
+				cin >> p;
+				pipes.insert({ p.Getid(), p });
+				cout << "Добавить еще?" << endl << "\t 0. Нет" << endl << "\t 1. Да" << endl;
+				if (get_value(0, 1) == 0)
+					break;
+			
 		}
 		case 2:
 		{
 			CKC c;
 			cin >> c;
-			cs.push_back(c);
-			break;
+			cs.insert({ c.Getid(), c });
+			cout << "Добавить еще?" << endl << "\t 0. Нет" << endl << "\t 1. Да" << endl;
+			if (get_value(0, 1) == 0)
+				break;
 		}
 		case 3:
 		{
