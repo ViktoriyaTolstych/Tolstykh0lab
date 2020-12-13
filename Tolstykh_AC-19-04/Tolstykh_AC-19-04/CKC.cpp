@@ -1,4 +1,6 @@
 #include "CKC.h"
+#include "utility.h"
+
 using namespace std;
 
 int CKC::CountKC = 0;

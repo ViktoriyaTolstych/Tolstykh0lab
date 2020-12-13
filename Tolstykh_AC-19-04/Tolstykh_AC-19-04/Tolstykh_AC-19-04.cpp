@@ -4,19 +4,9 @@
 #include <vector>
 #include "CKC.h"
 #include "Cpipe.h"
+#include "utility.h"
 using namespace std;
-template<typename T>
-T proverka(T less, T more)
-{
-	T x;
-	while ((cin >> x).fail() || x > more || x < less)
-		{
-		cout << "Пожалуйста введите корректные данные" << endl;
-			cin.clear();
-			cin.ignore(10000, '\n');
-		}
-	return x;
-}
+
 std::istream& operator>>(std::istream& in, CKC& cs)
 {
 	cout << "Пожалуйста введите имя КС n - ";
