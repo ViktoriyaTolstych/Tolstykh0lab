@@ -1,18 +1,19 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <list>
-using namespace std;
+#include "lib.h"
 	class Cpipe
 	{	
+	public:
 		int identificator;
 		float dlina = 0;
 		float diametr = 0;
 		bool priznak = false;
 	public:
 		static int CountP;
-		string checkRepair(const Cpipe& p);
-		istream& operator>> (istream& in, Cpipe& p);
+		static std::unordered_map<int, Cpipe> 
+		EditOnePipe(std::unordered_map<int, Cpipe>& pipes);
+		static void EditAllPipes(std::unordered_map<int, Cpipe>& pipes);
+		std::string checkRepair();
+		void send();
 		Cpipe();
 	};
 

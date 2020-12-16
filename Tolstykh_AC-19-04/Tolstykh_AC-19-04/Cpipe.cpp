@@ -1,39 +1,54 @@
 #include "Cpipe.h"
-#include <iostream>
-#include <string>
-#include "utility.h"
-#include <list>
+#include "Utility.h"
 
 using namespace std;
 
 int Cpipe::CountP = 0;
-
-string Cpipe::checkRepair(Cpipe& p)
-{
-	return (p.priznak) ? "Не работает \n\n" : "В работе \n\n";
-}
-
-std::istream& Cpipe::operator>>(istream& in, Cpipe& p)
-{
-	std::cout << "\nВведите диаметр ( в мм) - ";
-	p.diametr = proverka<double>(0, 10000);
-	std::cout << "Введите длину (в м ) - ";
-	p.dlina = proverka<double>(0, 10000);
-	std::cout << endl;
-	return in;
-};
-	
-
 Cpipe::Cpipe()
 {
 	identificator = CountP++;
-	cout << "ID для данной трубы = " << identificator << endl;
 }
-
-
-std::string checkRepair(const Cpipe& p)
+std::unordered_map<int, Cpipe> Cpipe::EditOnePipe(std::unordered_map<int, Cpipe>& pipes)
 {
-	return (p.priznak) ? "Unworking \n\n" : "Working \n\n";
+	cout << "Введите id который вы хотите изменить: ";
+	int k;
+	cin >> k;
+	cout << "0.Труба в работе \n1. Труба не в работе\nВыберите - ";
+	int choice = Utility::proverka(0, 1);
+	pipes[k].priznak = choice;
+	cout << endl;
+	return pipes;
 
 }
+void Cpipe::EditAllPipes(std::unordered_map<int, Cpipe>& pipes)
+{
+	cout << "0. Труба в работе\n1. Труба не в работе\nВыберите - ";
+	int choice = Utility::proverka(0, 1);
+	cout << endl;
+	for (auto& i : pipes)
+	{
+		i.second.priznak = choice;
+	}
+}
+
+
+
+void Cpipe::send()
+{
+	std::cout << "\nВведите диаметр ( в мм) - ";
+	diametr = Utility::proverka<double>(0, 10000);
+	std::cout << "Введите длину (в м ) - ";
+	dlina = Utility::proverka<double>(0, 10000);
+	std::cout << endl;
+}
+std::string Cpipe::checkRepair()
+{
+	return (priznak) ? "Не в работе \n\n" : "В работе \n\n";
+}
+
+
+
+
+
+
 

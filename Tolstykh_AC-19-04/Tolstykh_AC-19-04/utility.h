@@ -1,30 +1,40 @@
 #pragma once
-#include <iostream>
-#include <list>
-using namespace std;
+#include "lib.h"
+#include <unordered_map>
+class Utility
+{
+public:
+	template<typename T>
+	static T proverka(T less, T more);
+	template <class className>
+	static void DeleteObject(std::unordered_map<int, className>& group);
+
+};
 template<typename T>
-T proverka(T less, T more)
+T Utility:: proverka(T less, T more)
 {
 	T x;
-	while ((cin >> x).fail() || x > more || x < less)
+	while ((std::cin >> x).fail() || x > more || x < less)
 	{
-		cout << "Пожалуйста введите корректные данные" << endl;
-		cin.clear();
-		cin.ignore(10000, '\n');
+		std::cout << "Пожалуйста введите корректные данные" << std::endl;
+		std::cin.clear();
+		std::cin.ignore(10000, '\n');
 	}
 	return x;
 }
 template <class className>
-void DeleteObject(std::unordered_map<int, className>& group)
+void Utility::DeleteObject(std::unordered_map<int, className>& group)
 {
-	int id = getIntValue("Введите id объекта", 0u, group.size());
+	std::cout<<"Введите id объекта"<<std::endl;
+	int id;
+	std::cin >> id;
 	if (group.find(id)!=group.end())
 	{
 		group.erase(id);
-		cout << endl;
+		std::cout << std::endl;
 	}
 	else
 	{
-		cout << "Такого объекта нет. "<< endl;
+		std::cout << "Такого объекта нет. "<< std::endl;
 	}
 }

@@ -1,9 +1,9 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <list>
+#include "lib.h"
 class CKC
 {
+public:
+
 	int identificator;
 	std::string name = " ";
 	int kolvo_tsehov =0;
@@ -11,9 +11,11 @@ class CKC
 	float effektivnost=0;
 public:
 	static int CountKC;
-	
-	int kolvo_tsehov
-	std::istream& operator>>(std::istream& in, CKC& cs);
+	static std::unordered_map<int, CKC>
+EditAllKC(std::unordered_map<int, CKC>& cs);
+	static std::unordered_map<int, CKC> 
+	EditOneKC(std::unordered_map<int, CKC>& cs);
+	void send();
 	CKC();
 };
 
