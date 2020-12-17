@@ -3,6 +3,7 @@
 #include "utility.h"
 #include "lib.h"
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -61,16 +62,16 @@ void Viewall(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& c)
 		cout << endl;
 		for (auto p : pipes)
 		{
-			cout << " id трубы: " << p.second.identificator << std::endl << "димаетр:: " << p.second.diametr << std::endl
-				<< "длина: " << p.second.dlina << std::endl << "состояние трубы:: " << p.second.checkRepair();
+			cout << " id трубы: " << p.second.Getidentificator() << std::endl << "димаетр:: " << p.second.Getdiametr() << std::endl
+				<< "длина: " << p.second.Getdlina() << std::endl << "состояние трубы:: " << p.second.checkRepair();
 		}
 		for (auto cs : c)
 		{
 			cout.precision(2);
-			cout << "\nКС id: " << cs.second.identificator << endl << "Имя: " << cs.second.name
-				<< endl << "Количество цехов: " << cs.second.kolvo_tsehov << endl
-				<< "Количество цехов в работе: " << cs.second.kolvo_tsehov_v_rabote << endl
-				<< "Эффективность: " << cs.second.effektivnost << endl << endl;
+			cout << "\nКС id: " << cs.second.Getidentificator() << endl << "Имя: " << cs.second.Getname()
+				<< endl << "Количество цехов: " << cs.second.Getkolvo_tsehov() << endl
+				<< "Количество цехов в работе: " << cs.second.Getkolvo_tsehov_v_rabote() << endl
+				<< "Эффективность: " << cs.second.Geteffektivnost() << endl << endl;
 		}
 		break;
 	}
@@ -79,8 +80,8 @@ void Viewall(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& c)
 		cout << "Выберите id который вы хотите вывести: ";
 		int OutPipe;
 		cin >> OutPipe;
-		cout << " id трубы : " << pipes[OutPipe].identificator << endl << "диаметр: " << pipes[OutPipe].diametr << endl
-			<< "длина: " << pipes[OutPipe].dlina << endl << "состояние трубы: " << pipes[OutPipe].checkRepair();
+		cout << " id трубы : " << pipes[OutPipe].Getidentificator() << endl << "диаметр: " << pipes[OutPipe].Getdiametr() << endl
+			<< "длина: " << pipes[OutPipe].Getdlina() << endl << "состояние трубы: " << pipes[OutPipe].checkRepair();
 		break;
 	}
 	case 3:
@@ -89,10 +90,10 @@ void Viewall(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& c)
 		int OutKC;
 		cin >> OutKC;
 		cout.precision(2);
-		cout << "\nКС id: " << c[OutKC].identificator << endl << "Имя: " << c[OutKC].name
-			<< endl << "Количесвто цехов: " << c[OutKC].kolvo_tsehov << endl
-			<< "Количество цехов в работе: " << c[OutKC].kolvo_tsehov_v_rabote << endl
-			<< "Эффективность: " << c[OutKC].effektivnost << endl << endl;;
+		cout << "\nКС id: " << c[OutKC].Getidentificator() << endl << "Имя: " << c[OutKC].Getname()
+			<< endl << "Количесвто цехов: " << c[OutKC].Getkolvo_tsehov() << endl
+			<< "Количество цехов в работе: " << c[OutKC].Getkolvo_tsehov_v_rabote() << endl
+			<< "Эффективность: " << c[OutKC].Geteffektivnost() << endl << endl;;
 		break;
 	}
 	}
@@ -115,14 +116,14 @@ void SaveAll(unordered_map<int,Cpipe>& pipes, const unordered_map<int,CKC>& cs)
 		{
 			for (auto& p : pipes)
 			{
-				fout << p.second.identificator << endl << p.second.diametr << endl 
-					<< p.second.dlina << endl << p.second.priznak << endl << endl;
+				fout << p.second.Getidentificator() << endl << p.second.Getdiametr() << endl 
+					<< p.second.Getdlina() << endl << p.second.Getpriznak() << endl << endl;
 			}
 			for (const auto& i : cs)
 			{
 				/*fout.precision(2);*/
-				fout << i.second.identificator << endl << i.second.name << endl << i.second.kolvo_tsehov << endl
-					<< i.second.kolvo_tsehov_v_rabote << endl << i.second.effektivnost << endl << endl;
+				fout << i.second.Getidentificator() << endl << i.second.Getname() << endl << i.second.Getkolvo_tsehov() << endl
+					<< i.second.Getkolvo_tsehov_v_rabote() << endl << i.second.Geteffektivnost() << endl << endl;
 			}
 			cout << "Сохранено\n\n";
 		}
@@ -146,20 +147,20 @@ void LoadAll(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& cs)
 		for (int i = 0; i < lenpipe; i++)
 		{
 			Cpipe p;
-			fin >> p.identificator;
-			fin >> p.diametr;
-			fin >> p.dlina;
-			fin >> p.priznak;
+			fin >> p.Getidentificator();
+			fin >> p.Getdiametr();
+			fin >> p.Getdlina();
+			fin >> p.Getpriznak();
 			pipes.insert(pair<int, Cpipe>(pipes.size(), p));
 		}
 		for (int i = 0; i < lencs; i++)
 		{
 			CKC c;
-			fin >> c.identificator;
-			fin >> c.name;
-			fin >> c.kolvo_tsehov;
-			fin >> c.kolvo_tsehov_v_rabote;
-			fin >> c.effektivnost;
+			fin >> c.Getidentificator();
+			fin >> c.Getname();
+			fin >> c.Getkolvo_tsehov();
+			fin >> c.Getkolvo_tsehov_v_rabote();
+			fin >> c.Geteffektivnost();
 			cs.insert(pair<int, CKC>(cs.size(), c));
 		}
 		fin.close();
@@ -168,19 +169,19 @@ void LoadAll(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& cs)
 }
 bool SearchById(Cpipe& p, int param)
 {
-	return p.identificator == param;
+	return p.Getidentificator() == param;
 }
 bool SearchByRepair(Cpipe& p, int param)
 {
-	return p.priznak == param - bool(1);
+	return p.Getpriznak() == param - bool(1);
 }
 bool SearchByName(CKC& cs, string name)
 {
-	return cs.name == name;
+	return cs.Getname() == name;
 }
 bool SearchByPercent(CKC& cs, int param)
 {
-	return 100 * (1 - (1. * cs.kolvo_tsehov_v_rabote) / cs.kolvo_tsehov) >= param;
+	return 100 * (1 - (1. * cs.Getkolvo_tsehov_v_rabote()) / cs.Getkolvo_tsehov()) >= param;
 }
 template <typename N>
 void FiltrationPipes(unordered_map<int, Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
@@ -203,10 +204,10 @@ void FiltrationCs(unordered_map<int, CKC>& vect, bool(*f)(CKC& p, N param), N pa
 		if (f(i.second, param))
 		{
 			cout.precision(2);
-			cout << "\nКС id: " << i.second.identificator << endl << "Имя: " << i.second.name
-				<< endl << "Количество цехов: " << i.second.kolvo_tsehov << endl
-				<< "Количество цехов в работе: " << i.second.kolvo_tsehov_v_rabote << endl
-				<< "Эффективность: " << i.second.effektivnost << endl << endl;
+			cout << "\nКС id: " << i.second.Getidentificator() << endl << "Имя: " << i.second.Getname()
+				<< endl << "Количество цехов: " << i.second.Getkolvo_tsehov() << endl
+				<< "Количество цехов в работе: " << i.second.Getkolvo_tsehov_v_rabote() << endl
+				<< "Эффективность: " << i.second.Geteffektivnost() << endl << endl;
 		}
 	}
 	cout << endl;
