@@ -37,6 +37,26 @@ void CKC::send()
 	effektivnost = 1. / (rand() % 10);
 	cout <<endl;
 }
+int CKC::Getidentificator() const
+{
+	return identificator;
+}
+std::string CKC::Getname() const
+{
+	return name;
+}
+int CKC::Getkolvo_tsehov() const
+{
+	return kolvo_tsehov;
+}
+int CKC::Getkolvo_tsehov_v_rabote() const
+{
+	return kolvo_tsehov_v_rabote;
+}
+float CKC::Geteffektivnost() const
+{
+	return effektivnost;
+}
 std::unordered_map<int, CKC> CKC::EditAllKC(std::unordered_map<int, CKC>& cs)
 {
 	cout << "\n0. Запустить цеха\n1. Остановить цеха\nВыберите - ";

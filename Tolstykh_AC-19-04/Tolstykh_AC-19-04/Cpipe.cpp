@@ -8,6 +8,22 @@ Cpipe::Cpipe()
 {
 	identificator = CountP++;
 }
+int Cpipe::Getidentificator() const
+{
+	return identificator;
+}
+float Cpipe::Getdlina() const
+{
+	return dlina;
+}
+float Cpipe::Getdiametr() const
+{
+	return diametr;
+}
+bool Cpipe::Getpriznak() const
+{
+	return priznak;
+}
 std::unordered_map<int, Cpipe> Cpipe::EditOnePipe(std::unordered_map<int, Cpipe>& pipes)
 {
 	cout << "¬ведите id который вы хотите изменить: ";
