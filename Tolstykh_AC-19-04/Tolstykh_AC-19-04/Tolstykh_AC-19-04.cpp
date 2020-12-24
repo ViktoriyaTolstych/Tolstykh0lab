@@ -2,8 +2,12 @@
 #include "Cpipe.h"
 #include "utility.h"
 #include "lib.h"
+#include "seti.h"
+#include <unordered_map>
 #include <iostream>
 #include <fstream>
+#include <string>
+#include <vector>
 
 using namespace std;
 
@@ -14,44 +18,62 @@ void menu()
 		<< "3. Показать объекты" << endl
 		<< "4. Редактировать трубу" << endl
 		<< "5. Редактировать КС" << endl
-		<< "6. Поиск по фильтру" << endl
-		<< "7. Удалить объекты" << endl
-		<< "8. Сохранить в файл" << endl
-		<< "9. Загрузить из файла" << endl
+		<< "6. Сохранить в файл" << endl
+		<< "7. Загрузить из файла " << endl
+		<< "8. Поиск по фильтру" << endl
+		<< "9. Удалить трубу или КС" << endl
+		<<"10.Соединить КС с трубой"<< endl 
+		<<"11. Топологическая сортировка"<< endl
+		<<"12. Сохранить сеть"<< endl
 		<< "0. Выход" << endl
 		<< endl << "Выберите действие - ";
 
 }
-void EditPipe(unordered_map<int, Cpipe>&pipes)
+string EnterName()
 {
-	cout << "1. Изменить все существующие трубы\n2. Изменить одну трубу\nВыберите - ";
-	if (Utility::proverka(1, 2) == 1)
-	{
-		cout << endl;
-		Cpipe::EditAllPipes(pipes);
-	}
-	else
-	{
-		cout <<endl;
-		Cpipe::EditOnePipe(pipes);
-	}
+	string filename;
+	cout << "\nПожалуйста введите имя для KC: ";
+	cin.ignore(1000, '\n');
+	getline(cin, filename);
+	return filename;
+}
+bool SearchById(Cpipe& p, int param)
+{
+	return p.Getidentificator() == param;
+}
+bool SearchByRepair(Cpipe& p, int param)
+{
+	return p.Getpriznak() == param - bool(1);
+}
+bool SearchByName(CKC& cs, string name)
+{
+	return cs.Getname() == name;
+}
+bool SearchByPercent(CKC& cs, int param)
+{
+	return 100 * (1 - (1. * cs.Getkolvo_tsehov_v_rabote()) / cs.Getkolvo_tsehov()) >= param;
 
 }
-
- void EditCS(unordered_map<int,CKC>&cs)
+template <typename W, typename T>
+using Filter = bool(*)(const W& o, T param);
+template <typename W, typename T>
+vector<int> FindItemsByFilter(const unordered_map <int, W>& g, Filter <W, T> f, T param)
 {
-	 cout << "1. Изменить все существующие КС\n2. Изменить одну КС\nВыберите - ";
-	 if (Utility::proverka(1, 2) == 1)
-	 {
-		 cout << endl;
-		 CKC::EditAllKC(cs);
-	 }
-	 else
-	 {
-		 cout << endl;
-		 CKC::EditOneKC(cs);
-	 }
+	vector<int>res;
+	int i = 0;
+	for (const auto& obj : g)
+	{
+		if (f(obj.second, param))
+			res.push_back(i);
+		i++;
+	}
+	if (res.size() == 0)
+	{
+		cout << "Ошибка\n";
+	}
+	return res;
 }
+
 void Viewall(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& c)
 {
 	cout << "1. Просмотр всего\n" << "2. Просмотр труб\n" << "3. Просмотр КС\nВыберите - ";
@@ -167,34 +189,82 @@ void LoadAll(unordered_map<int, Cpipe>& pipes, unordered_map<int, CKC>& cs)
 		cout << "Data downloaded\n\n";
 	}
 }
-bool SearchById(Cpipe& p, int param)
+void Cpipe::EditAllPipes(unordered_map<int, Cpipe>& pipes)
 {
-	return p.Getidentificator() == param;
-}
-bool SearchByRepair(Cpipe& p, int param)
-{
-	return p.Getpriznak() == param - bool(1);
-}
-bool SearchByName(CKC& cs, string name)
-{
-	return cs.Getname() == name;
-}
-bool SearchByPercent(CKC& cs, int param)
-{
-	return 100 * (1 - (1. * cs.Getkolvo_tsehov_v_rabote()) / cs.Getkolvo_tsehov()) >= param;
-}
-template <typename N>
-void FiltrationPipes(unordered_map<int, Cpipe>& vect, bool(*f)(Cpipe& p, N param), N param)
-{
-	for (auto& i : vect)
+	cout << "Выберите трубы для редактирования" << endl;
+	cout << "\n1. Трубы в работе \n2. Трубы остановленные\n3.По ID";
+	switch (Utility::proverka(1, 3))
 	{
-		if (f(i.second, param))
-		{
-			cout << endl << "id трубы: " << i.second.identificator << std::endl << "диаметр: " << i.second.diametr << std::endl
-				<< "длина: " << i.second.dlina << std::endl << "состояние трубы: " << i.second.checkRepair();
-		}
+	case 1:
+	{
+		for (int i : FindItemsByFilter(pipes, SearchByRepair, 0))
+			pipes.find(i)->second.EditPipe();
 	}
-	cout << endl;
+	case 2:
+	{
+		for (int i : FindItemsByFilter(pipes, SearchByRepair, 1))
+			pipes.find(i)->second.EditPipe();
+	}
+	case 3:
+	{vector<int> v;
+	while (1)
+	{
+		cout << "Введите id для редактирования: ";
+		v.push_back(Utility::proverka(1, Cpipe::Getidentificator()));
+		cout << "Вы хотите еще отредактировать трубы? " << endl << "\t0.Да\n1.Нет";
+		if (Utility::proverka(0, 1) == 1)
+			break;
+	} for (auto i : v)
+	{
+		if (pipes.find(i) != pipes.end())
+			pipes.find(i)->second.EditPipe();
+	}
+	break;
+	}
+	}
+}
+
+void DelPipes(unordered_map<int, Cpipe>& pipes_p)
+{
+	if (pipes_p.size() != 0)
+	{
+		cout << "Введите ID трубы которую вы хотите удалить: ";
+		int i;
+		cin >> i;
+		if (pipes_p.find(i) != pipes_p.end())
+			pipes_p.erase(i);
+		cout << "Труба удалена";
+	}
+	else
+	{
+		cout << "Ошибка\n";
+	}
+}
+
+void DelKC(unordered_map <int, CKC>& kc_k, eti& network, unordered_map<int, Cpipe>& pv)
+{
+	if (kc_k.size() != 0)
+	{
+		cout << "Введите ID KC которую вы хотите удалить : ";
+		int t = Utility::proverka(1, CKC::Getidentificator());
+		network.deleteidks(t);
+		for (auto& n : pv)
+		{
+			if (n.second.getinputks() == t)
+				n.second.setinputks(0);
+		}
+		for (auto& n : pv)
+		{
+			if (n.second.getoutputks() == t)
+				n.second.setoutputks(0);
+		}
+		kc_k.erase(t);
+		cout << "KC удалена";
+	}
+	else
+	{
+		cout << "Ошибка\n";
+	}
 }
 template <typename N>
 void FiltrationCs(unordered_map<int, CKC>& vect, bool(*f)(CKC& p, N param), N param)
@@ -225,7 +295,7 @@ void SearchByFilterPipes(unordered_map<int, Cpipe>& pipes)
 	{
 		cout << "\n1. В работе\n2. Не в работе\nВыберите действие - ";
 		int choice = Utility::proverka(1, 2);
-		FiltrationPipes(pipes, SearchByRepair, choice);
+		FiltrationPipe(pipes, SearchByRepair, choice);
 	}
 }
 void SearchByFilterCs(unordered_map<int, CKC>& cs)
@@ -252,51 +322,112 @@ void SearchByFilterCs(unordered_map<int, CKC>& cs)
 int main()
 {
 	setlocale(LC_ALL, "Russian");
-	 unordered_map <int,Cpipe> pipes;
-	 unordered_map <int,CKC> cs;
+	 unordered_map <int,Cpipe> pv;
+	 unordered_map <int,CKC> kv;
+	 seti network;
 	while (true)
 	{
 		menu();
-		switch (Utility::proverka(0, 9))
+		switch (Utility::proverka(0, 12))
 		{
 		case 1:
 		{
 			Cpipe p;
-			p.send();
-			pipes.insert(pair<int, Cpipe>(pipes.size(), p));
-			break;
+			cin >> p;
+			pv.insert(pair<int, Cpipe>(p.getID(), p));
 			
 		}
 		case 2:
 		{
-			CKC c;
-			c.send();
-			cs.insert(pair<int, CKC>(cs.size(), c));
-				break;
+			CKC k;
+			cin >> k;
+			kv.insert(pair<int, CKC>(k.getID(), k));
+			break;
 		}
 		case 3:
 		{
-			Viewall(pipes, cs);
+			{
+				if (pv.size() > 0)
+
+					for (const auto& p : pv)
+					{
+						cout << p.second << endl;
+					}
+
+				else
+				{
+					cout <<"Здесь нет информации о трубах \n ";
+				}
+				if (kv.size() > 0)
+					for (const auto& k : kv)
+					{
+						cout << k.second << endl;
+					}
+				else
+				{
+					cout << "Здесь нет информации о KC, не возможно создать сеть\n ";
+				}
+				break;
+			}
 			break;
 		}
 		case 4:
 		{
-			EditPipe(pipes);
+			{
+				if (pv.size())
+					EditAllPipes(pv);
+				else cout « "Здесь нет информации о трубах \n ";
 			break;
 		}
 		case 5:
 		{
-			EditCS(cs);
+			{if (kv.size())
+			{
+				cout << "Пожалуйста введите ID KC которую вы хотите отредактировать: ";
+				int n;
+				cin >> n;
+				kv[n].REdaktKC();
+			}
+			else
+				cout << "Здесь нет информации о KC\n ";
+
+			}
 			break;
 		}
 		case 6:
 		{
-			cout << "1. Поиск по трубам\n2. Поиск по КС\nSelect action - ";
-			if (Utility::proverka(1, 2) == 1)
-				SearchByFilterPipes(pipes);
-			else
-				SearchByFilterCs(cs);
-			break;
+			{
+				if ((pv.size() != 0) and (kv.size() != 0))
+				{
+					ofstream fout;
+					string nameoffile;
+					cout << "Введите имя файла";
+					cin.ignore();
+					getline(cin, nameoffile);
+					fout.open(nameoffile, ios::out);
+					if (fout.is_open())
+					{
+						fout << pv.size() << endl;
+						fout << kv.size() << endl;
+						for (const auto& p : pv)
+						{
+							fout << p.second;
+						}
+						for (const auto& k : kv)
+						{
+							fout << k.second;
+						}
+						fout.close();
+					}break;
+				}
+
+				else
+				{
+					cout <<  "Здесь нет труб и KC\n ";
+				}
+
+			}
+			
 		}
 		case 7:
 		{
