@@ -1,7 +1,6 @@
 ﻿#include "CKC.h"
 #include "Cpipe.h"
 #include "utility.h"
-#include "lib.h"
 #include "seti.h"
 #include <unordered_map>
 #include <iostream>
@@ -11,14 +10,6 @@
 #include <windows.h>
 
 using namespace std;
-string EnterName()
-{
-	string filename;
-	cout << "\nПожалуйста введите имя KC: ";
-	cin.ignore(1000, '\n');
-	getline(cin, filename);
-	return filename;
-}
 
 bool SearchByRepair(const Cpipe& p, int param)
 {
@@ -34,6 +25,7 @@ bool SearchByPercent(const CKC& kv, double param)
 }
 template <typename W, typename T>
 using Filter = bool(*)(const W& o, T param);
+
 template <typename W, typename T>
 vector<int> FindItemsByFilter(const unordered_map <int, W>& g, Filter <W, T> f, T param)
 {
@@ -70,6 +62,26 @@ vector<int> FindItemsByFilter(const unordered_map <int, W>& g, Filter <W, T> f, 
 //	}
 //
 //}
+template <typename T>
+int GetId(const unordered_map<int, T>& mapp)
+{
+	int id;
+	while (true)
+	{
+		cout << "Введите id (больше 0): ";
+		cin >> id;
+		if (id == 0)
+		{
+			cout << endl << "Выход..." << endl;
+			return -1;
+		}
+		else if (mapp.count(id))
+		{
+			return id;
+		}
+		cout << endl << "Такого id нет. Введите ещё раз" << endl;
+	}
+}
 
 void EditPackPipeline(unordered_map<int, Cpipe>& pv)
 {
@@ -125,31 +137,24 @@ void DelPipes(unordered_map<int, Cpipe>& pipes_p)
 	}
 }
 
-//void DelKC(unordered_map <int, CKC>& kc_k, seti& network, unordered_map<int, Cpipe>& pv)
-//{
-//	if (kc_k.size() != 0)
-//	{
-//		cout << "Введите ID KC которую хоите удалить: ";
-//		int t = Utility::proverka(1, CKC::GetCountKC());
-//		network.deleteidks(t);
-//		for (auto& n : pv)
-//		{
-//			if (n.second.getinputks() == t)
-//				n.second.setinputks(0);
-//		}
-//		for (auto& n : pv)
-//		{
-//			if (n.second.getoutputks() == t)
-//				n.second.setoutputks(0);
-//		}
-//		kc_k.erase(t);
-//		cout << "Кс удалена";
-//	}
-//	else
-//	{
-//		cout << "Ошибка\n";
-//	}
-//}
+void DelKC(unordered_map <int, CKC>& cs)
+{
+	if (cs.size() != 0)
+	{
+		cout << "Введите ID KC которую хотите удалить: ";
+		int i;
+		cin >> i;
+		if (cs.find(i) != cs.end())
+		{
+			cs.erase(i);
+			cout << "КС удалена";
+		}
+	}
+	else
+	{
+		cout << "ошибка\n";
+	}
+}
 
 
 void PrintMenu()
@@ -177,11 +182,8 @@ int main()
 	SetConsoleOutputCP(1251);
 	unordered_map<int, Cpipe> pv;
 	unordered_map<int, CKC> kv;
-
-	/*seti network;
-	vector<unsigned int> sortedmatrix;
-	CKC k;
-	Cpipe p;*/
+	int edgeCount = 0;
+	
 	while (1)
 	{
 		PrintMenu();
@@ -190,8 +192,7 @@ int main()
 		{
 		case 1:
 		{
-
-			Cpipe p;
+            Cpipe p;
 			cin >> p;
 			pv.insert(pair<int, Cpipe>(++Cpipe::MaxId, p));
 			break;
@@ -238,10 +239,10 @@ int main()
 		{
 			if (pv.size() > 0)
 			{
-				cout << "Введите ID KC которую хотите редактировать ";
-				int k;
-				cin >> k;
-				pv[k].RedaktPipeline();
+				cout << "Введите ID который вы хотите изменить: ";
+				int k = GetId(pv);
+				if (k != -1)
+					pv[k].RedaktPipeline();
 			}
 			else
 			{
@@ -255,8 +256,8 @@ int main()
 			if (kv.size()>0)
 		{
 			cout << "Введите ID KC которую хотите редактировать ";
-			int k;
-			cin >> k;
+			int k = GetId(kv);
+			if (k != -1)
 			kv[k].RedaktKC();
 		}
 		else
@@ -265,69 +266,79 @@ int main()
 		}break;
 
 		case 6:
-
-
 		{
-			if ((pv.size() != 0) and (kv.size() != 0))
+			if ((pv.size() != 0) && (kv.size() != 0))
 			{
 				ofstream fout;
 				string nameoffile;
-				cout << "Введите имя файла";
+				cout << "Введите имя файла.txt";
 				cin.ignore();
 				getline(cin, nameoffile);
-				fout.open(nameoffile, ios::out);
+				fout.open(nameoffile +".txt", ios::out);
 				if (fout.is_open())
 				{
 					fout << pv.size() << endl;
-					fout << kv.size() << endl;
-					for (const auto& p : pv)
+					fout << kv.size() << endl
+					<< Cpipe::MaxId << endl
+						<< CKC::KCMaxId << endl
+						<< edgeCount << endl;
+					for (auto& p : pv)
 					{
-						fout << p.second;
+						fout << p.first << endl;
+						p.second.Save(fout); 
 					}
-					for (const auto& k : kv)
+					for (auto& k : kv)
 					{
-						fout << k.second;
+						fout << k.first << endl;
+						k.second.Save(fout);
 					}
 					fout.close();
-				}break;
+				}
 			}
 
 			else
 			{
 				cout << "Ошибка\n ";
 			}
-
-
-
+			break;
 		}
 
 		case 7:
-
 		{
-
 			{
 				ifstream fin;
 				string nameoffile;
 				cout << "Введите имя файла";
 				cin.ignore();
 				getline(cin, nameoffile);
-				fin.open(nameoffile, ios::in);
+				fin.open(nameoffile + ".txt", ios::in);
 				if (fin.is_open())
 
 				{
+					pv.clear();
+					kv.clear();
 					int count1;
 					int count2;
 					fin >> count1;
 					fin >> count2;
+					fin >> Cpipe::MaxId;
+					fin >> CKC::KCMaxId;
+					fin >> edgeCount;
 					while (count1--)
 					{
+						int id;
+						fin >> id;
 						Cpipe p;
-						fin >> p;
+						p.Load(fin);
+						pv.insert(make_pair(id, p)); 
 					}
 					while (count2--)
 					{
+						int id;
+						fin >> id;
 						CKC k;
-						fin >> k;
+						k.Load(fin);
+						kv.insert(make_pair(id, k)); 
 					}
 
 				}
@@ -360,9 +371,13 @@ int main()
 				cout << "\ncВыберите\n1.По имени\n" << "2.Процент неиспользованных цехов в работе";
 			if (Utility::proverka(1, 2) == 1)
 			{
-
-				for (int i : FindItemsByFilter(kv, SearchByName, EnterName()))
+				string name;
+				cout << "\nПожалуйста введите имя KC: ";
+				cin.ignore(1000, '\n');
+				getline(cin, name);
+				for (int i : FindItemsByFilter(kv, SearchByName, name))
 					cout << kv[i + 1];
+		
 			}
 			else
 			{
@@ -373,73 +388,55 @@ int main()
 			break;
 		}
 		case 9:
-		{ cout << "1.Трубы" << endl
-			<< "2. KC" << endl
-			<< "Пожалуйста выберите что хотите удалить: ";
-		if (Utility::proverka(1, 2) == 1)
 		{
 			DelPipes(pv);
-		}
-		else
-		{
-			/*DelKC(kv, network, pv);*/
-		}
 		break;
 		}
-		/*case 10:
+		case 10:
 		{
-
-			network.editnetwork(pv);
+			DelKC(kv);
 			break;
-
 		}
 		case 11:
 		{
-			sortedmatrix = network.tgtssort(pv);
-			if (sortedmatrix.size() > 0)
+			if (pv.size())
 			{
-				int k = 1;
-				for (auto& i : sortedmatrix)
+				int id = GetId(pv);
+				if (id != -1)
 				{
-					cout << k << " ID :"<< i << endl;
-					k += 1;
+					cout << "КС откуда выходит труба:";
+					int in = GetId(kv);
+					cout << "КС куда входит труба:";
+					int out = GetId(kv);
+					if (in != out)
+					{
+						pv[id].Svyazat(in, out);
+						edgeCount++;
+					}
+					else
+						cout << "ошибка" << endl;
 				}
 			}
-			else
-				cout << "Это цикл\n";
 			break;
 		}
 		case 12:
 		{
-			if (network.getidks().size() > 0 || network.getidt().size() > 0)
+			if (pv.size() > 0 && kv.size() > 1)
 			{
-				ofstream fout;
-				fout.open("gts.txt", ios::out);
-				if (fout.is_open())
-				{
-					sortedmatrix = network.tgtssort(pv);
-					if (sortedmatrix.size() > 0)
-					{
-						int k = 1;
-						for (auto& i : sortedmatrix)
-						{
-
-							fout << k << " ID :" << i << endl;
-							k += 1;
-						}
-
-					}
-					network.savefilenetwork(fout);
-					fout.close();
-				}
-				break;
+				for (const pair<int, Cpipe>& p : pv)
+					if (p.second.CanIspolzovat())
+						p.second.ShowSvyaz(p.first);
 			}
-			else
-			{
-				cout << "Нет сети\n";
-				break;
-			}*/
-
+			break;
+		}
+		case 13:
+		{
+			seti net(edgeCount);
+			for (const pair<int, Cpipe>& p : pv)
+				if (p.second.CanIspolzovat())
+					net.addEdge(p.second.out - 1, p.second.in - 1);
+			net.topologicalSort();
+			break;
 		}
 		case 0:
 		{
