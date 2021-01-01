@@ -1,5 +1,8 @@
 #include "Cpipe.h"
 #include "Utility.h"
+#include <iostream>
+#include <string>
+#include <unordered_map>
 
 using namespace std;
 
@@ -8,63 +11,94 @@ Cpipe::Cpipe()
 {
 	identificator = CountP++;
 }
+int Cpipe::GetCountP()
+{
+	return CountP;
+}
 int Cpipe::Getidentificator() const
 {
 	return identificator;
-}
-float Cpipe::Getdlina() const
-{
-	return dlina;
-}
-float Cpipe::Getdiametr() const
-{
-	return diametr;
 }
 bool Cpipe::Getpriznak() const
 {
 	return priznak;
 }
-std::unordered_map<int, Cpipe> Cpipe::EditOnePipe(std::unordered_map<int, Cpipe>& pipes)
+void Cpipe::setinputks(unsigned int value)
 {
-	cout << "Введите id который вы хотите изменить: ";
-	int k;
-	cin >> k;
-	cout << "0.Труба в работе \n1. Труба не в работе\nВыберите - ";
-	int choice = Utility::proverka(0, 1);
-	pipes[k].priznak = choice;
-	cout << endl;
-	return pipes;
-
+	inputks = value;
 }
-void Cpipe::EditAllPipes(std::unordered_map<int, Cpipe>& pipes)
+void Cpipe::setoutputks(unsigned int value)
 {
-	cout << "0. Труба в работе\n1. Труба не в работе\nВыберите - ";
-	int choice = Utility::proverka(0, 1);
-	cout << endl;
-	for (auto& i : pipes)
-	{
-		i.second.priznak = choice;
-	}
+	outputks = value;
 }
-
-
-
-void Cpipe::send()
+unsigned int Cpipe::getinputks()
 {
-	std::cout << "\nВведите диаметр ( в мм) - ";
-	diametr = Utility::proverka<double>(0, 10000);
-	std::cout << "Введите длину (в м ) - ";
-	dlina = Utility::proverka<double>(0, 10000);
-	std::cout << endl;
+	return inputks;
 }
-std::string Cpipe::checkRepair()
+unsigned int Cpipe::getoutputks()
 {
-	return (priznak) ? "Не в работе \n\n" : "В работе \n\n";
+	return outputks;
+}
+void Cpipe::savefilepipe(std::ofstream& fout)
+{
+	fout << identificator << endl;
+	fout << inputks << endl;
+	fout << outputks << endl;
+	fout << dlina << endl;
+	fout << diametr << endl;
+	fout << priznak << endl;
+}
+void Cpipe::inputfilepipe(std::ifstream& fin)
+{
+	fin >> identificator;
+	fin >> inputks;
+	fin >> outputks;
+	fin >> dlina;
+	fin >> diametr;
+	fin >> priznak;
+}
+void Cpipe::RedaktPipeline()
+{
+	priznak = !priznak;
+	cout << "Статус трубы изменен";
+}
+std::string Cpipe::checkRemont(const Cpipe& p)
+{
+	return (p.priznak) ? "В ремонте \n\n" : "Работает \n\n"; 
+}
+int Cpipe::getID() const
+{
+	return 0;
+}
+std::ostream& operator<<(std::ostream& out, const Cpipe& x)
+{
+	out << "\tТрубы:\n";
+	out << "ID трубы: " << x.identificator << endl;
+	out << "Длина: " << x.dlina << endl;
+	out << "Диаметр: " << x.diametr << endl;
+	(x.priznak) ? out << "Труба не работает\n" : out <<" Труба работает\n";
+	return out;
 }
 
+std::istream& operator>>(std::istream& in, Cpipe& x)
+{
+	x.identificator = ++Cpipe::CountP;
+	std::cout <<" Введите длину(м):\n";
+	x.dlina =Utility::proverka(0, 1000);
+	std::cout << "Введите диаметр(мм): ";
+	x.diametr = Utility::proverka(1, 1000);
+	(x.priznak) ? cout << "Труба в ремонте\n" : cout << "Труба работает\n";
+	return in;
+}
 
+std::ofstream& operator<<(std::ofstream& fout, const Cpipe& x)
+{
+	fout << x.identificator << endl << x.dlina << endl << x.diametr << endl << x.priznak << endl;
+	return fout;
+}
 
-
-
-
-
+std::ifstream& operator>>(std::ifstream& fin, Cpipe& x)
+{
+	fin >> x.identificator >> x.dlina >> x.diametr >> x.priznak;
+	return fin;
+}

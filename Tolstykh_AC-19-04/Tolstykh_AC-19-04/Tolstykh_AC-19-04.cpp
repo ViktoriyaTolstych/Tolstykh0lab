@@ -8,6 +8,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <windows.h>
 
 using namespace std;
 string EnterName()
@@ -46,29 +47,29 @@ vector<int> FindItemsByFilter(const unordered_map <int, W>& g, Filter <W, T> f, 
 	}
 	if (res.size() == 0)
 	{
-		cout « "Ошибка\n";
+		cout << "Ошибка\n";
 	}
 	return res;
 }
 
-void EditOneKC(unordered_map<int, CKC>& kv)
-{
-	cout << "Введите ID Кс которую вы хотите редактировать: ";
-	int k;
-	k = Utility::proverka(1, CKC::GetCountKC());
-	cout << "\n0. Добавить цех в работе\n1. Удалить работающий цех\n ";
-	if (Utility::proverka(0, 1) == 0)
-	{
-		if (kv[k].Getkolvo_tsehov() > kv[k].Getkolvo_tsehov_v_rabote())
-			kv[k].Getkolvo_tsehov_v_rabote() += 1;
-	}
-	else
-	{
-		if (kv[k].Getkolvo_tsehov_v_rabote() > 0)
-			kv[k].Getkolvo_tsehov_v_rabote() -= 1;
-	}
-
-}
+//void EditOneKC(unordered_map<int, CKC>& kv)
+//{
+//	cout << "Введите ID Кс которую вы хотите редактировать: ";
+//	int k;
+//	k = Utility::proverka(1, CKC::GetCountKC());
+//	cout << "\n0. Добавить цех в работе\n1. Удалить работающий цех\n ";
+//	if (Utility::proverka(0, 1) == 0)
+//	{
+//		if (kv[k].Getkolvo_tsehov() > kv[k].Getkolvo_tsehov_v_rabote())
+//			kv[k].Getkolvo_tsehov_v_rabote() += 1;
+//	}
+//	else
+//	{
+//		if (kv[k].Getkolvo_tsehov_v_rabote() > 0)
+//			kv[k].Getkolvo_tsehov_v_rabote() -= 1;
+//	}
+//
+//}
 
 void EditPackPipeline(unordered_map<int, Cpipe>& pv)
 {
@@ -90,8 +91,8 @@ void EditPackPipeline(unordered_map<int, Cpipe>& pv)
 	{vector<int> v;
 	while (1)
 	{
-		cout << "Введите idкоторый хотите редактировать: ";
-		v.push_back(Utility::proverka(1, Cpipe::GetCountP()));
+		cout << "Введите id который хотите редактировать: ";
+		v.push_back(Utility::proverka(1, Cpipe::MaxId));
 		cout << "Хотите ли вы отредактировать что-либо еще? " << endl << "\t0.Да\n1.Нет";
 		if (Utility::proverka(0, 1) == 1)
 			break;
@@ -113,8 +114,10 @@ void DelPipes(unordered_map<int, Cpipe>& pipes_p)
 		int i;
 		cin >> i;
 		if (pipes_p.find(i) != pipes_p.end())
+		{
 			pipes_p.erase(i);
-		cout << "труба удалена";
+			cout << "труба удалена";
+		}
 	}
 	else
 	{
@@ -122,31 +125,31 @@ void DelPipes(unordered_map<int, Cpipe>& pipes_p)
 	}
 }
 
-void DelKC(unordered_map <int, CKC>& kc_k, seti& network, unordered_map<int, Cpipe>& pv)
-{
-	if (kc_k.size() != 0)
-	{
-		cout << "Введите ID KC которую хоите удалить: ";
-		int t = Utility::proverka(1, CKC::GetCountKC());
-		network.deleteidks(t);
-		for (auto& n : pv)
-		{
-			if (n.second.getinputks() == t)
-				n.second.setinputks(0);
-		}
-		for (auto& n : pv)
-		{
-			if (n.second.getoutputks() == t)
-				n.second.setoutputks(0);
-		}
-		kc_k.erase(t);
-		cout << "Кс удалена";
-	}
-	else
-	{
-		cout << "Ошибка\n";
-	}
-}
+//void DelKC(unordered_map <int, CKC>& kc_k, seti& network, unordered_map<int, Cpipe>& pv)
+//{
+//	if (kc_k.size() != 0)
+//	{
+//		cout << "Введите ID KC которую хоите удалить: ";
+//		int t = Utility::proverka(1, CKC::GetCountKC());
+//		network.deleteidks(t);
+//		for (auto& n : pv)
+//		{
+//			if (n.second.getinputks() == t)
+//				n.second.setinputks(0);
+//		}
+//		for (auto& n : pv)
+//		{
+//			if (n.second.getoutputks() == t)
+//				n.second.setoutputks(0);
+//		}
+//		kc_k.erase(t);
+//		cout << "Кс удалена";
+//	}
+//	else
+//	{
+//		cout << "Ошибка\n";
+//	}
+//}
 
 
 void PrintMenu()
@@ -170,13 +173,15 @@ void PrintMenu()
 
 int main()
 {
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
 	unordered_map<int, Cpipe> pv;
 	unordered_map<int, CKC> kv;
 
-	seti network;
+	/*seti network;
 	vector<unsigned int> sortedmatrix;
 	CKC k;
-	Cpipe p;
+	Cpipe p;*/
 	while (1)
 	{
 		PrintMenu();
@@ -188,35 +193,40 @@ int main()
 
 			Cpipe p;
 			cin >> p;
-			pv.insert(pair<int, Cpipe>(p.getID(), p));
+			pv.insert(pair<int, Cpipe>(++Cpipe::MaxId, p));
 			break;
 		}
 		case 2:
 		{
 			CKC k;
 			cin >> k;
-			kv.insert(pair<int, CKC>(k.getID(), k));
+			kv.insert(pair<int, CKC>(++CKC::KCMaxId, k));
 			break;
 		}
 		case 3:
 
 		{
 			if (pv.size() > 0)
+			{
+				cout << "Трубы:" << endl;
 
 				for (const auto& p : pv)
 				{
-					cout << p.second << endl;
+					cout << p.first << ':' << p.second << endl;
 				}
-
+			}
 			else
 			{
 				cout << "Нет информации о трубах \n ";
 			}
 			if (kv.size() > 0)
+			{
+				cout << "KC:" << endl;
 				for (const auto& k : kv)
 				{
-					cout << k.second <<endl;
+					cout << k.first << ':' << k.second << endl;
 				}
+			}
 			else
 			{
 				cout << "Нет информации о КС\n ";
@@ -226,19 +236,28 @@ int main()
 		case 4:
 
 		{
-			if (pv.size())
-				EditPackPipeline(pv );
-			else cout << "Нет информации о трубах \n ";
+			if (pv.size() > 0)
+			{
+				cout << "Введите ID KC которую хотите редактировать ";
+				int k;
+				cin >> k;
+				pv[k].RedaktPipeline();
+			}
+			else
+			{
+				cout << "Нет информации о трубах \n ";
+			}
 			break;
 		}
 		case 5:
 
-		{if (kv.size())
+		{
+			if (kv.size()>0)
 		{
 			cout << "Введите ID KC которую хотите редактировать ";
-			int n;
-			cin >> n;
-			kv[n].RedaktKC();
+			int k;
+			cin >> k;
+			kv[k].RedaktKC();
 		}
 		else
 			cout << "Нет информации о KC\n ";
@@ -303,7 +322,6 @@ int main()
 					while (count1--)
 					{
 						Cpipe p;
-						p.inputfilepipe(fin);
 						fin >> p;
 					}
 					while (count2--)
@@ -364,11 +382,11 @@ int main()
 		}
 		else
 		{
-			DelKC(kv, network, pv);
+			/*DelKC(kv, network, pv);*/
 		}
 		break;
 		}
-		case 10:
+		/*case 10:
 		{
 
 			network.editnetwork(pv);
@@ -420,7 +438,7 @@ int main()
 			{
 				cout << "Нет сети\n";
 				break;
-			}
+			}*/
 
 		}
 		case 0:

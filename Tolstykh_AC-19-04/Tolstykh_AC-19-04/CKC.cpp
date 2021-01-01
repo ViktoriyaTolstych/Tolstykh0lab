@@ -1,88 +1,96 @@
 #include "CKC.h"
 #include "utility.h"
+#include <unordered_map>
+#include <iostream>
+#include <string>
 using namespace std;
 
 int CKC::CountKC = 0;
+static int CountKC;
 
-std::unordered_map<int, CKC> CKC::EditOneKC(std::unordered_map<int, CKC>& cs)
+int CKC::GetCountKC()
 {
-	cout << "Id КС которую вы хотите изменить: ";
-	int k;
-	cin >> k;
-	cout <<"\n0. Начать работу цеха\n1. Остановить работу цеха\nSelect - ";
-	if (Utility::proverka(0, 1) == 0)
-	{
-		if (cs[k].kolvo_tsehov > cs[k].kolvo_tsehov_v_rabote)
-			cs[k].kolvo_tsehov_v_rabote += 1;
-	}
-	else
-	{
-		if (cs[k].kolvo_tsehov_v_rabote > 0)
-			cs[k].kolvo_tsehov_v_rabote -= 1;
-	}
-	return cs;
+	return CountKC;
 }
 
-
-void CKC::send()
-{
-	cout << "Пожалуйста введите имя КС n - ";
-	cin.ignore();
-	getline(cin, name);
-	cout << "Введите количество цехов - ";
-	kolvo_tsehov = Utility::proverka(0, 1000);
-	cout <<"Введите количесво цехов в работе - ";
-	kolvo_tsehov_v_rabote = Utility::proverka(0, kolvo_tsehov);
-
-	effektivnost = 1. / (rand() % 10);
-	cout <<endl;
-}
 int CKC::Getidentificator() const
 {
 	return identificator;
 }
-std::string CKC::Getname() const
+int CKC::getID() const
 {
-	return name;
+	return identificator;
 }
-int CKC::Getkolvo_tsehov() const
+std::istream& operator>>(std::istream& in, CKC& y)
 {
-	return kolvo_tsehov;
+	y.identificator = ++CKC::CountKC;
+	std::cout << "Введите имя КС \n";
+	cin.ignore();
+	getline(cin, y.name);
+	std::cout << " Введите числ цехов \n";
+	y.kolvo_tsehov = Utility::proverka(0, 1000);
+	std::cout << "Введите число цехов в ремонте\n";
+	y.kolvo_tsehov_v_rabote = Utility::proverka(1, y.kolvo_tsehov);
+	std::cout << "Введите эффективность (1-10)\n";
+	y.effektivnost = Utility::proverka(1, 10);
+	return in;
 }
-int CKC::Getkolvo_tsehov_v_rabote() const
+std::ostream& operator<<(std::ostream& out, const CKC& y)
 {
-	return kolvo_tsehov_v_rabote;
+	out << "\tKC\n";
+	out << " ID KC: " << y.identificator << endl
+		<< "Колво цехов: " << y.kolvo_tsehov << endl
+		<< "Колво работающих цехов: " << y.kolvo_tsehov_v_rabote << endl
+		<< "Эффективность: " << y.effektivnost << endl;
+	return out;
+
 }
-float CKC::Geteffektivnost() const
+std::ofstream& operator<<(std::ofstream& fout, const CKC& y)
 {
-	return effektivnost;
+	fout << y.identificator << endl
+		<< y.kolvo_tsehov << endl
+		<< y.kolvo_tsehov_v_rabote << endl
+		<< y.effektivnost << endl;
+	return fout;
 }
-std::unordered_map<int, CKC> CKC::EditAllKC(std::unordered_map<int, CKC>& cs)
+
+std::ifstream& operator>>(std::ifstream& fin, CKC& y)
 {
-	cout << "\n0. Запустить цеха\n1. Остановить цеха\nВыберите - ";
-	int choice = Utility::proverka(0, 1);
-	cout << endl;
-	for (auto& i : cs)
+	fin >> y.identificator >> y.kolvo_tsehov >> y.kolvo_tsehov_v_rabote >> y.effektivnost;
+	return fin;
+}
+
+
+void CKC::RedaktKC()
+{
+	cout << "Вы хотите ихменить число работающих цехов?\n";
+	char i;
+	cin >> i;
+	while (i != 'да' && i != 'нет')
 	{
-		if (choice == 0 && (i.second.kolvo_tsehov > i.second.kolvo_tsehov_v_rabote))
-		{
-			i.second.kolvo_tsehov_v_rabote += 1;
-		}
-		else if (i.second.kolvo_tsehov_v_rabote > 0)
-		{
-			i.second.kolvo_tsehov_v_rabote -= 1;
-		}
+		cout << " Введите да или нет: ";
+		cin >> i;
 	}
-	return cs;
+	switch (i)
+	{
+	case 'да':
+	{
+		cout << "Введите число работающих цехов: ";
+		int vsego = kolvo_tsehov;
+		kolvo_tsehov_v_rabote = Utility::proverka(0, vsego);
+		cout << "Информация изменена \n";
+		break;
+	}
+	case 'нет':
+	{
+		break;
+	}
+	}
 }
 
 
-CKC::CKC()
-{
-	identificator = CountKC;
-	CountKC++;
-	cout << "ID для данной КС = " << identificator << endl;
-}
+
+
 
 
 

@@ -141,12 +141,14 @@
   <ItemGroup>
     <ClCompile Include="CKC.cpp" />
     <ClCompile Include="Cpipe.cpp" />
+    <ClCompile Include="seti.cpp" />
     <ClCompile Include="Tolstykh_AC-19-04.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CKC.h" />
     <ClInclude Include="Cpipe.h" />
     <ClInclude Include="lib.h" />
+    <ClInclude Include="seti.h" />
     <ClInclude Include="utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
