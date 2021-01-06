@@ -8,7 +8,9 @@
 #include <string>
 #include <vector>
 #include <windows.h>
+#include <set>
 
+//4 лр
 using namespace std;
 
 bool SearchByRepair(const Cpipe& p, int param)
@@ -167,10 +169,11 @@ void PrintMenu()
 		<< "6. Сохранить в файл" << endl
 		<< "7. Загрузить из файла " << endl
 		<< "8. Поиск по фильтру" << endl
-		<< "9. Удалить трубу или КС" << endl
-		<< "10.Соединить КС с трубой" << endl
-		<< "11. Топологическая сортировка" << endl
-		<< "12. Сохранить сеть" << endl
+		<< "9. Удалить трубу " << endl
+		<< "10.Удалить КС" << endl
+		<< "11. Соединить трубу" << endl
+		<< "12. Вывести сеть" << endl
+		<< "13. Топоологическая сортировка" << endl
 		<< "0. Выход" << endl
 		<< endl << "Выберите действие - ";
 
@@ -182,17 +185,17 @@ int main()
 	SetConsoleOutputCP(1251);
 	unordered_map<int, Cpipe> pv;
 	unordered_map<int, CKC> kv;
-	int edgeCount = 0;
-	
+
+
 	while (1)
 	{
 		PrintMenu();
 
-		switch (Utility::proverka(0, 12))
+		switch (Utility::proverka(0, 13))
 		{
 		case 1:
 		{
-            Cpipe p;
+			Cpipe p;
 			cin >> p;
 			pv.insert(pair<int, Cpipe>(++Cpipe::MaxId, p));
 			break;
@@ -253,15 +256,15 @@ int main()
 		case 5:
 
 		{
-			if (kv.size()>0)
-		{
-			cout << "Введите ID KC которую хотите редактировать ";
-			int k = GetId(kv);
-			if (k != -1)
-			kv[k].RedaktKC();
-		}
-		else
-			cout << "Нет информации о KC\n ";
+			if (kv.size() > 0)
+			{
+				cout << "Введите ID KC которую хотите редактировать ";
+				int k = GetId(kv);
+				if (k != -1)
+					kv[k].RedaktKC();
+			}
+			else
+				cout << "Нет информации о KC\n ";
 
 		}break;
 
@@ -274,18 +277,18 @@ int main()
 				cout << "Введите имя файла.txt";
 				cin.ignore();
 				getline(cin, nameoffile);
-				fout.open(nameoffile +".txt", ios::out);
+				fout.open(nameoffile + ".txt", ios::out);
 				if (fout.is_open())
 				{
 					fout << pv.size() << endl;
 					fout << kv.size() << endl
-					<< Cpipe::MaxId << endl
-						<< CKC::KCMaxId << endl
-						<< edgeCount << endl;
+						<< Cpipe::MaxId << endl
+						<< CKC::KCMaxId << endl;
+
 					for (auto& p : pv)
 					{
 						fout << p.first << endl;
-						p.second.Save(fout); 
+						p.second.Save(fout);
 					}
 					for (auto& k : kv)
 					{
@@ -323,14 +326,13 @@ int main()
 					fin >> count2;
 					fin >> Cpipe::MaxId;
 					fin >> CKC::KCMaxId;
-					fin >> edgeCount;
 					while (count1--)
 					{
 						int id;
 						fin >> id;
 						Cpipe p;
 						p.Load(fin);
-						pv.insert(make_pair(id, p)); 
+						pv.insert(make_pair(id, p));
 					}
 					while (count2--)
 					{
@@ -338,16 +340,13 @@ int main()
 						fin >> id;
 						CKC k;
 						k.Load(fin);
-						kv.insert(make_pair(id, k)); 
+						kv.insert(make_pair(id, k));
 					}
-
+					fin.close();
 				}
 				else cout << "файл не найден\n";
-				fin.close();
+				break;
 			}
-
-			break;
-		}
 
 
 		case 8:
@@ -377,7 +376,7 @@ int main()
 				getline(cin, name);
 				for (int i : FindItemsByFilter(kv, SearchByName, name))
 					cout << kv[i + 1];
-		
+
 			}
 			else
 			{
@@ -390,7 +389,7 @@ int main()
 		case 9:
 		{
 			DelPipes(pv);
-		break;
+			break;
 		}
 		case 10:
 		{
@@ -409,10 +408,8 @@ int main()
 					cout << "КС куда входит труба:";
 					int out = GetId(kv);
 					if (in != out)
-					{
 						pv[id].Svyazat(in, out);
-						edgeCount++;
-					}
+
 					else
 						cout << "ошибка" << endl;
 				}
@@ -431,12 +428,36 @@ int main()
 		}
 		case 13:
 		{
-			seti net(edgeCount);
-			for (const pair<int, Cpipe>& p : pv)
+			unordered_map<int, int> indexVershin;
+			int n;
+			set<int> vershini;
+			for (const auto& p : pv)
+				if (p.second.CanIspolzovat() && kv.count(p.second.in) && kv.count(p.second.out))
+				{
+					vershini.insert(p.second.out);
+					vershini.insert(p.second.in);
+				}
+			n = vershini.size();
+			unordered_map<int, int> IndexVershinNaoborot;
+			int i = 0;
+			for (const int& vershina : vershini)
+			{
+				indexVershin.insert(make_pair(i, vershina));
+				IndexVershinNaoborot.insert(make_pair(vershina, i++));
+			}
+			vector<vector<int>> rebra;
+			rebra.resize(n);
+			for (const auto& p : pv)
 				if (p.second.CanIspolzovat())
-					net.addEdge(p.second.out - 1, p.second.in - 1);
-			net.topologicalSort();
+					rebra[IndexVershinNaoborot[p.second.out]].push_back(IndexVershinNaoborot[p.second.in]);
+
+			seti net(rebra);
+			if (net.HasCicl() == false)
+				net.topologicalSort(indexVershin);
+			else
+				cout << "В графе есть цикл" << endl;
 			break;
+
 		}
 		case 0:
 		{
@@ -447,7 +468,8 @@ int main()
 		default:
 		{cout << "Ошибка" << endl; }
 		}
-	}
+		}
 
-	return 0;
+		return 0;
+	}
 }

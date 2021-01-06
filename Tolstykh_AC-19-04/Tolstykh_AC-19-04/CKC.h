@@ -1,30 +1,30 @@
 #pragma once
-#include "lib.h"
+#include "utility.h"
 #include <iostream>
 #include <string>
 #include <fstream>
-#include <unordered_map>
-#include"seti.h"
+
+using namespace std;
+
 class CKC
 {
-int identificator;
-	
-	static int CountKC;
-public:
-	std::string name = " ";
-	int kolvo_tsehov = 0;
-	int kolvo_tsehov_v_rabote = 0;
-	float effektivnost = 0;
-	static int GetCountKC();
-	int Getidentificator() const;
-
-friend std::ostream& operator <<(std::ostream& out, const CKC& x);
-	friend std::istream& operator >>(std::istream& in, CKC& x);
-	friend std::ofstream& operator << (std::ofstream& fout, const CKC& x);
-	friend std::ifstream& operator >> (std::ifstream& fin, CKC& x);
-
-	int getID()const;
+	string name ;
+	int kolvo_tsehov ;
+	int kolvo_tsehov_v_rabote;
+	float effektivnost;
+	public:
+	static int KCMaxId;
+    friend ostream& operator <<(std::ostream& out, const CKC& cs);
+	friend istream& operator >>(std::istream& in, CKC& cs);
+	void Save(ofstream& fout);
+	void Load(ifstream& fin);
+	string Getname() const;
+	int Getkolvo_tsehov() const;
+	int Getkolvo_tsehov_v_rabote() const;
+	float Geteffektivnost() const;
+	friend void EditAllKC(unordered_map<int, CKC>& cs);
 	void RedaktKC();
+	CKC();
 };
 
 

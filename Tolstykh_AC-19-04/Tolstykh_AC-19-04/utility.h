@@ -1,5 +1,5 @@
 #pragma once
-#include "lib.h"
+#include <iostream>
 #include <unordered_map>
 
 class Utility
@@ -7,9 +7,7 @@ class Utility
 public:
 	template<typename T>
 	static T proverka(T less, T more);
-	template <class className>
-	/*static void DeleteObject(std::unordered_map<int, className>& group);*/
-
+	
 };
 
 template<typename T>
@@ -24,19 +22,3 @@ T Utility:: proverka(T less, T more)
 	}
 	return x;
 }
-//template <class className>
-//void Utility::DeleteObject(std::unordered_map<int, className>& group)
-//{
-//	std::cout<<"Введите id объекта"<<std::endl;
-//	int id;
-//	std::cin >> id;
-//	if (group.find(id)!=group.end())
-//	{
-//		group.erase(id);
-//		std::cout << std::endl;
-//	}
-//	else
-//	{
-//		std::cout << "Такого объекта нет. "<< std::endl;
-//	}
-//}
