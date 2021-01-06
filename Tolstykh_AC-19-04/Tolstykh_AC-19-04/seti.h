@@ -16,6 +16,7 @@ public:
     seti(const vector<vector<int>>& r);
     void topologicalSort(unordered_map<int, int>& indexVershin);
     bool HasCicl();
+    int FindMaxPotok(int start, int end);
 
 };
 

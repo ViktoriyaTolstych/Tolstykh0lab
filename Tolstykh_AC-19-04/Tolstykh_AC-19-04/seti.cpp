@@ -75,4 +75,79 @@ bool seti::HasCicl()
 	else
 		return true;
 }
+int min(int x, int y)
+{
+	if (x < y)
+		return x;
+	else
+		return y;
+}
+
+void Enque(int x, vector<int>& q, int& konec, vector<int>& pometki)
+{
+	q[konec] = x;
+	konec++;
+	pometki[x] = 1;
+}
+
+int bfs(int start, int end, vector<int>& pometki, vector<int>& pred, vector<int>& q, vector<vector<int>>& capacity, vector<vector<int>>& flow, int n, int& nachalo, int& konec)
+{
+	for (int u = 0; u < n; u++)
+		pometki[u] = 0;
+
+	nachalo = 0;
+	konec = 0;
+	Enque(start, q, konec, pometki);
+	pred[start] = -1;
+	while (nachalo != konec)
+	{
+		int u = q[nachalo];
+		nachalo++;
+		pometki[u] = 2;
+		for (int v = 0; v < n; v++)
+		{
+			if (pometki[v] == 0 && (capacity[u][v] - flow[u][v]) > 0) {
+				Enque(v, q, konec, pometki);
+				pred[v] = u;
+			}
+		}
+	}
+	if (pometki[end] == 2)
+		return 0;
+	else return 1;
+}
+int seti::FindMaxPotok(int start, int end)
+{
+	int nachalo, konec;
+	vector<vector<int>> potok;
+	vector<int> pometki, pred, q;
+	int n = rebra.size();
+
+	int maxpotok = 0;
+	potok.resize(n);
+	for (int i = 0; i < n; i++)
+	{
+		for (int j = 0; j < n; j++)
+			potok[i].push_back(0);
+		pometki.push_back(-1);
+		pred.push_back(-1);
+		q.push_back(0);
+	}
+	q.push_back(0); q.push_back(0);
+	while (bfs(start, end, pometki, pred, q, rebra, potok, n, nachalo, konec) == 0)
+	{
+		int delta = 10000;
+		for (int u = end; pred[u] >= 0; u = pred[u])
+		{
+			delta = min(delta, (rebra[pred[u]][u] - potok[pred[u]][u]));
+		}
+		for (int u = end; pred[u] >= 0; u = pred[u])
+		{
+			potok[pred[u]][u] += delta;
+			potok[u][pred[u]] -= delta;
+		}
+		maxpotok += delta;
+	}
+	return maxpotok;
+}
 
