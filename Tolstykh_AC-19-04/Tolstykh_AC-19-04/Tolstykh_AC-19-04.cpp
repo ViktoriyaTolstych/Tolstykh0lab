@@ -155,6 +155,7 @@ void PrintMenu()
 		<< "12. Вывести сеть" << endl
 		<< "13. Топоологическая сортировка" << endl
 		<< "14. Найти максимальный поток" << endl
+		<< "15. Найти кратчайшие пути" << endl
 		<< "0. Выход" << endl
 		<< endl << "Выберите действие - ";
 
@@ -172,7 +173,7 @@ int main()
 	{
 		PrintMenu();
 
-		switch (Utility::proverka(0, 14))
+		switch (Utility::proverka(0, 15))
 		{
 		case 1:
 		{
@@ -492,7 +493,47 @@ int main()
 
 			break;
 		}
-		
+		case 15:
+		{
+			set<int> vershii;
+			for (const auto& p : pv)
+				if (p.second.CanIspolzovat())
+				{
+					vershii.insert(p.second.out);
+					vershii.insert(p.second.in);
+				}
+			int n = vershii.size();
+			unordered_map<int, int> indexVershinNaoborot;
+			unordered_map<int, int> indexVershin;
+			int i = 0;
+			for (const int& vershina : vershii)
+			{
+				indexVershin.insert(make_pair(i, vershina));
+				indexVershinNaoborot.insert(make_pair(vershina, i++));
+			}
+			vector<vector<int>> rebra;
+			rebra.resize(n);
+			for (int i = 0; i < n; i++)
+				for (int j = 0; j < n; j++)
+					rebra[i].push_back(0);
+			for (const auto& p : pv)
+				if (p.second.CanIspolzovat())
+					rebra[indexVershinNaoborot[p.second.out]][indexVershinNaoborot[p.second.in]] = p.second.Getdlina();
+
+			int start;
+			cout << "Введите id КС, из которой будут считаться пути: ";
+			cin >> start;
+			if (indexVershinNaoborot.find(start) != indexVershinNaoborot.end())
+				start = indexVershinNaoborot[start];
+			else
+			{
+				cout << "такой КС нет в сети";
+				break;
+			}
+			seti net = seti(rebra);
+			net.FindKratchaishiPut(start, indexVershin);
+			break;
+		}
 		case 0:
 		{
 			return 0;
@@ -503,7 +544,6 @@ int main()
 		{cout << "Ошибка" << endl; }
 		}
 		}
-
-		return 0;
 	}
+	return 0;
 }

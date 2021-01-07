@@ -17,6 +17,6 @@ public:
     void topologicalSort(unordered_map<int, int>& indexVershin);
     bool HasCicl();
     int FindMaxPotok(int start, int end);
-
-};
+    void FindKratchaishiPut(int start, unordered_map<int, int> indexVershin);
+}
 
